@@ -1,0 +1,26 @@
+/* Basic Element
+---------------------------------------------------*/
+
+	body	{
+		font-family: 'Roboto Condensed', sans-serif;
+	}
+	
+	#wrapper	{
+		margin-top:	51px;
+	}
+	
+/* Navi bar
+---------------------------------------------------*/	
+	.navbar-fixed-top	{
+		font-family: 'Oswald', sans-serif;
+		font-weight:bold;
+	}
+	
+	.navbar-inverse .navbar-brand { color: #fff}
+	.navbar-inverse .navbar-brand:hover { color: grey}
+	
+	
+	.fullwidth	{width:100%;}
+	
+	.fullwidth .caret	{margin-top:8px;}
+	
