@@ -6,9 +6,14 @@
 		<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
 		<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 		<link href="http://fonts.googleapis.com/css?family=Roboto+Condensed:400italic,700italic,400,700|Oswald:400,700" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.5.4/bootstrap-select.min.css" rel="stylesheet">
 		<link href="code-phoenix.css" rel="stylesheet">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.5.4/bootstrap-select.min.js"></script>
+		<script src="code-phoenix.js"></script>
+	
 	</head>
 	<body>
 		<!-- Wrapper -->
@@ -65,15 +70,72 @@
 				<div class="row">
 					<!-- input Sku -->
 					<div class="col-md-4">
-						<h1><span class="glyphicon glyphicon-fire"></span> Search SKU</h1>
-						<div class="input-group">
-						  <input type="text" class="form-control" placeholder="sku input here  (ﾟ∀ﾟ)">
-						  <span class="input-group-btn">
-							<button class="btn btn-danger" type="button">Go!</button>
-						  </span>
-						</div>
-					</div>	
+						<h1><span class="glyphicon glyphicon-fire"></span> Quick Result</h1>
+						
+						<form class="form-horizontal" id="quick-result-form" role="form" >
+							<div class="input-group">
+								<span class="input-group-addon">SKU</span>	
+								<input name="qs-sku" type="text" class="form-control" placeholder="sku input here  (ﾟ∀ﾟ)" required maxlength="4">
+							</div>
+							<div class="input-group">
+								<span class="input-group-addon">NTD</span>
+								
+								<input name="qs-shipcost" type="number" class="form-control">
+								
+								<span class="input-group-addon">shipping cost</span>
+							</div>
+							<select name="qs-account" class="selectpicker" data-style="btn-info" data-width="100%">	
+								<option>All Account</option>
+								<optgroup label="Ebay">
+									<option>account1</option>
+									<option>account2</option>
+									<option>account3</option>
+								</optgroup>
+								<optgroup label="Amazon">
+									<option>account1</option>
+									<option>account2</option>
+									<option>account3</option>
+								</optgroup>								
+							</select>								
+							<button class="btn btn-danger fullwidth" type="submit">Go!</button>
+						</form>
+					</div>
 					
+					<div class="col-md-8">
+						<h1><span class="glyphicon glyphicon-flash"></span> Display</h1>
+						<div id="display-result">give me some info yo ლ(╹◡╹ლ)</div>
+					</div>
+
+				</div>
+				
+				<!-- Insert Area-->
+				<div class="row">
+					<div class="col-md-6">
+						<h1 ><span class="glyphicon glyphicon-tower"></span> Insert Data</h1>
+						<form class="form-horizontal" id="insert-data-form" >
+						
+							<div class="input-group">
+								<span class="input-group-addon">SKU</span>	
+								<input name="id-sku" type="text" class="form-control" required maxlength="4">
+							</div>		
+													
+							<select name="id-shipmethod" class="selectpicker" data-style="btn-info" data-width="100%">							
+								<option>EMS</option>
+								<option>Fedex</option>
+								<option>DHL</option>
+							</select>							
+							
+							<div class="input-group">
+								<span class="input-group-addon">NTD</span>
+								<input name="id-shipcost" type="number" class="form-control">			
+								<span class="input-group-addon">shipping cost</span>
+							</div>
+						
+					</div>
+				</div>
+				
+				<!-- Future Plan -->
+				<div class="row">
 					<div class="col-md-4">
 						<h1><span class="glyphicon glyphicon-th-list"></span> Statistic</h1>
 						
@@ -92,7 +154,7 @@
 						</div>
 					</div>
 					
-					<div class="col-md-4">
+					<div class="col-md-8">
 						<h1><span class="glyphicon glyphicon-wrench"></span> Modify</h1>
 						<ul class="nav nav-pills" role="tablist" id="search-area">
 							<li class="active"><a href="#home" role="tab" data-toggle="tab">Home</a></li>
@@ -108,23 +170,6 @@
 							<div class="tab-pane" id="settings">...</div>
 						</div>
 					</div>
-				</div>
-				
-				<!-- Display Area-->
-				<div class="row">
-					<div class="col-md-6">
-						<h1><span class="glyphicon glyphicon-tower"></span> Result</h1>
-						
-						<div class="input-group">
-							<span class="input-group-addon">Price</span>
-							<input type="text" class="form-control">
-							<span class="input-group-btn">
-								<button class="btn btn-danger" type="button">Go!</button>
-							</span>
-						</div>
-						  
-					</div>
-					
 				</div>
 				
 			</div>
