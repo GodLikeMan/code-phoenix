@@ -23,4 +23,8 @@
 	.fullwidth	{width:100%;}
 	
 	.fullwidth .caret	{margin-top:8px;}
+
 	
+/* Select
+---------------------------------------------------*/	
+.dropdown-menu dt{text-transform:capitalize;}

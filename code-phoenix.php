@@ -3,6 +3,7 @@
 	<head>
 		<title>Code Phoenix</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta charset="utf-8"> 
 		<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
 		<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 		<link href="http://fonts.googleapis.com/css?family=Roboto+Condensed:400italic,700italic,400,700|Oswald:400,700" rel="stylesheet">
@@ -75,7 +76,7 @@
 						<form class="form-horizontal" id="quick-result-form" role="form" >
 							<div class="input-group">
 								<span class="input-group-addon">SKU</span>	
-								<input name="qs-sku" type="text" class="form-control" placeholder="sku input here  (ﾟ∀ﾟ)" required maxlength="4">
+								<input name="qs-sku" type="text" class="form-control" placeholder="sku input here  (ﾟ∀ﾟ)" required maxlength="8">
 							</div>
 							<div class="input-group">
 								<span class="input-group-addon">NTD</span>
@@ -84,19 +85,29 @@
 								
 								<span class="input-group-addon">shipping cost</span>
 							</div>
-							<select name="qs-account" class="selectpicker" data-style="btn-info" data-width="100%">	
-								<option>All Account</option>
-								<optgroup label="Ebay">
-									<option>account1</option>
-									<option>account2</option>
-									<option>account3</option>
-								</optgroup>
-								<optgroup label="Amazon">
-									<option>account1</option>
-									<option>account2</option>
-									<option>account3</option>
-								</optgroup>								
-							</select>								
+							
+							<select name="qs-seller" class="selectpicker" data-width="100%">	
+								<option>Select a Seller</option>
+							<?php
+								
+								$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
+								mysqli_set_charset ($link ,"utf8");
+								$query = 'SELECT * FROM seller GROUP BY sell_platform'; 
+								$result = mysqli_query($link, $query); 
+								$group_tag = "";
+								while($row = mysqli_fetch_array($result)) { 
+									if(!($group_tag===$row['sell_platform'])){
+										echo('<optgroup label="'.$row['sell_platform'].'" >');
+									}	
+									echo('<option value="'.$row['id'].'">'.$row['name']."</option>"); 
+									if(!($group_tag===$row['sell_platform'])){
+										echo('</optgroup>');
+										$group_tag=$row['sell_platform'];
+									}										
+								} 								
+							?>
+							</select>
+							
 							<button class="btn btn-danger fullwidth" type="submit">Go!</button>
 						</form>
 					</div>
@@ -116,7 +127,7 @@
 						
 							<div class="input-group">
 								<span class="input-group-addon">SKU</span>	
-								<input name="id-sku" type="text" class="form-control" required maxlength="4">
+								<input name="id-sku" type="text" class="form-control" required maxlength="8">
 							</div>		
 													
 							<select name="id-shipmethod" class="selectpicker" data-style="btn-info" data-width="100%">							
@@ -139,27 +150,36 @@
 					<div class="col-md-4">
 						<h1><span class="glyphicon glyphicon-th-list"></span> Statistic</h1>
 						
-						<div class="dropdown fullwidth">
-							<button class="btn btn-info dropdown-toggle fullwidth" type="button" id="dropdownMenu1" data-toggle="dropdown">
-								Dropdown
-								<span class="caret pull-right"></span>
-							</button>
-							<ul class="dropdown-menu fullwidth" role="menu" aria-labelledby="dropdownMenu1">
-								<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
-								<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Another action</a></li>
-								<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
-								<li role="presentation" class="divider"></li>
-								<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
-							</ul>
+							<select name="qs-country" class="selectpicker" data-style="btn-info" data-width="100%" data-live-search="true" data-dropup-auto="false">	
+								<option disabled="disabled">Country List</option>
+								
+								<?php
+									//generate country selector
+									$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
+									mysqli_set_charset ($link ,"utf8");
+									$query = 'SELECT name,iso_numeric FROM country_list ORDER BY name'; 
+									$result = mysqli_query($link, $query); 
+									while($row = mysqli_fetch_array($result)) { 
+										
+										echo '<option value="'.$row[1].'">'.$row[0]."</option>"; 
+									} 
+								?>
+															
+							</select>	
+							
+						<div class="panel panel-primary">
+							<div class="panel-body">
+
+							</div>
 						</div>
 					</div>
 					
 					<div class="col-md-8">
 						<h1><span class="glyphicon glyphicon-wrench"></span> Modify</h1>
 						<ul class="nav nav-pills" role="tablist" id="search-area">
-							<li class="active"><a href="#home" role="tab" data-toggle="tab">Home</a></li>
-							<li><a href="#profile" role="tab" data-toggle="tab">Profile</a></li>
-							<li><a href="#messages" role="tab" data-toggle="tab">Messages</a></li>
+							<li class="active"><a href="#home" role="tab" data-toggle="tab">Seller Accounts</a></li>
+							<li><a href="#profile" role="tab" data-toggle="tab">Shipping Providers</a></li>
+							<li><a href="#messages" role="tab" data-toggle="tab">Package Types</a></li>
 							<li><a href="#settings" role="tab" data-toggle="tab">Settings</a></li>
 						</ul>
 
