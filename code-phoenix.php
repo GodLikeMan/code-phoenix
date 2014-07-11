@@ -122,23 +122,20 @@
 				<!-- Insert Area-->
 				<div class="row">
 					<div class="col-md-6">
-						<h1 ><span class="glyphicon glyphicon-tower"></span> Insert Data</h1>
+						<h1 ><span class="glyphicon glyphicon-tower"></span> Save This Result</h1>
 						<form class="form-horizontal" id="insert-data-form" >
 						
 							<div class="input-group">
 								<span class="input-group-addon">SKU</span>	
-								<input name="id-sku" type="text" class="form-control" required maxlength="8">
+								<input name="ia-sku" type="text" class="form-control" required maxlength="8">
 							</div>		
 													
-							<select name="id-shipmethod" class="selectpicker" data-style="btn-info" data-width="100%">							
-								<option>EMS</option>
-								<option>Fedex</option>
-								<option>DHL</option>
-							</select>							
+							<select name="ia-shipmethod" id="ia-shipmethod" class="selectpicker" data-style="btn-info" data-width="100%"></select>		
+							<select name="ia-package" id="ia-package" class="selectpicker" data-style="btn-info" data-width="100%"></select>	
 							
 							<div class="input-group">
 								<span class="input-group-addon">NTD</span>
-								<input name="id-shipcost" type="number" class="form-control">			
+								<input name="ia-shipcost" type="number" class="form-control">			
 								<span class="input-group-addon">shipping cost</span>
 							</div>
 						
