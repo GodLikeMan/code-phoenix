@@ -2,7 +2,7 @@
 ---------------------------------------------------*/
 
 	body	{
-		font-family: 'Roboto Condensed', sans-serif;
+		font-family: 'Roboto Condensed',Microsoft JhengHei,PMingLiU;
 	}
 	
 	#wrapper	{
@@ -28,3 +28,9 @@
 /* Select
 ---------------------------------------------------*/	
 .dropdown-menu dt{text-transform:capitalize;}
+
+/* Misc
+---------------------------------------------------*/	
+
+#ia-div{display:none;}
+#display-result{font-weight:bold;}

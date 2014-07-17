@@ -1,100 +1,85 @@
 <?php	
-	$info = array(
-		'product_cost'			=>	0,
-		'product_price'			=>	0,
-		'sell_platform'			=>	"",
-		'shipping_provider'	=>	array()
-	);
-	
-
-	echo	"<div class='panel panel-primary'><div class='panel-body'>";
-	
-	$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
-	if (mysqli_connect_errno()){die('DB connect lost! 。゜゜(´□｀。)°゜。');}
-	mysqli_set_charset ($link ,"utf8");
-	
-	$query = 'SELECT cost FROM product WHERE sku="'.$_POST['qs-sku'].'"'; 
-	
-	if($result = mysqli_query($link, $query)){
-		if(mysqli_num_rows($result)>0){
-			$row = mysqli_fetch_row($result);
-			$info['product_cost'] = $row[0] ;	
-		}
-		else{ die("<p>沒有這SKU ! ◢▆▅崩▄▃▂╰(〒皿〒)╯▂▃▄潰▅▇◣</p>");	}
-	}
-	else{ die("<p>查詢錯誤 ! ◢▆▅崩▄▃▂╰(〒皿〒)╯▂▃▄潰▅▇◣</p>");	}
-	
-
-	
-	$query = 'SELECT price FROM product_price WHERE sku="'.$_POST['qs-sku'].'" AND seller_id="'.$_POST['qs-seller'].'"';
-
-	if($result = mysqli_query($link, $query)){
-		if(mysqli_num_rows($result)>0){
-			$row = mysqli_fetch_row($result);
-			$info['product_price'] = $row[0] ;	
-		}
-		else{ die("<p>seller error</p>");	}
-	}
-	else{ die("<p>查詢錯誤 ! ◢▆▅崩▄▃▂╰(〒皿〒)╯▂▃▄潰▅▇◣</p>");	}	
-	
-	
-	
-	$query = 'SELECT sell_platform FROM seller WHERE id ="'.$_POST['qs-seller'].'"'; 
-	
-	if($result = mysqli_query($link, $query)){
-		if(mysqli_num_rows($result)>0){
-			$row = mysqli_fetch_row($result);
-			$info['sell_platform'] = $row[0] ;	
-		}
-		else{ die("<p>sell platform error</p>");	}
-	}
-	else{ die("<p>查詢錯誤 ! ◢▆▅崩▄▃▂╰(〒皿〒)╯▂▃▄潰▅▇◣</p>");	}	
-	
-	
-	
-	$query = 'SELECT id,name FROM shipping_provider'; 
-	
-	if($result = mysqli_query($link, $query)){
-		if(mysqli_num_rows($result)>0){
+	class  CodeMonkeys
+	{
+		private $works;
+		private $data;
+		private $info = [ ];
 		
-			$row = mysqli_fetch_all($result);
-			$info['shipping_provider'] = $row;
-	
+		function __construct($post_data) {
+			$this->works = $post_data['query'];
+			$this->data = $post_data;
 		}
-		else{ die("<p>shipping provider error</p>");	}
-	}
-	else{ die("<p>查詢錯誤 ! ◢▆▅崩▄▃▂╰(〒皿〒)╯▂▃▄潰▅▇◣</p>");	}	
-
-	
-	
-	
-	$query = 'SELECT * FROM package_type'; 
-	
-	if($result = mysqli_query($link, $query)){
-		if(mysqli_num_rows($result)>0){
 		
-			$row = mysqli_fetch_all($result);
-			$info['package_type'] = $row;
-	
+		public function getProductCost(){
+			$query = 'SELECT cost FROM product WHERE sku="'.$_POST['qs-sku'].'"'; 
+			$this->searchDB($query,'product_cost','This Sku not found on DB');		
 		}
-		else{ die("<p>package type error</p>");	}
-	}
-	else{ die("<p>查詢錯誤 ! ◢▆▅崩▄▃▂╰(〒皿〒)╯▂▃▄潰▅▇◣</p>");	}		
+		
+		public	function getProductSellinfo(){
+			$query = 'SELECT price,s_price,currency FROM product_sellinfo WHERE sku="'.$_POST['qs-sku'].'" AND seller_id="'.$_POST['qs-seller'].'"';
+			$this->searchDB($query,'product_sellinfo','Product Price Error');	
+		}
+		
+		public function	getSellPlatform(){
+			$query = 'SELECT sell_platform FROM seller WHERE id ="'.$_POST['qs-seller'].'"'; 
+			$this->searchDB($query,'sell_platform','Sell Platform Error ');
+		}
 	
-	
-	
-	echo "<p>成本->".$info['product_cost']."</p>";
-	echo "<p>售價->".$info['product_price']."</p>";
-	echo "<p>平台->".$info['sell_platform']."</p>";
+		public function	getShippingProvider(){
+			$query = 'SELECT id,name FROM shipping_provider'; 
+			$this->searchDB($query,'shipping_provider','Shipping Provider Error');	
+		}
+		
+		public	function getPackageType(){
+			$query = 'SELECT id,name FROM package_type WHERE sp_id = 0 OR sp_id="'.$_POST['ia-shipmethod'].'"';
+			$this->searchDB($query,'package_type','Package Type Error');
+		}
+		
+		public function getShippingRecordInfo(){
+			
+			$query = 'SELECT cl.name,avg(sr.s_cost)  FROM shipping_record AS sr,country_list AS cl WHERE  sku="'.$_POST['qs-sku'].'" AND sr.country_code = cl.iso_numeric GROUP BY cl.name ';
+			$this->searchDB($query,'shipping_record',false);
+		}
+		
+		public function searchDB($query,$array_key,$error_msg){
+		
+			$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
+			if (mysqli_connect_errno()){ die( json_encode(array('message' => 'ERROR', 'code' => 'DB connect lost! 。゜゜(´□｀。)°゜。')));	}
+			mysqli_set_charset ($link ,"utf8");	
+			
+			if($result = mysqli_query($link, $query)){
+				if(mysqli_num_rows($result)>0){
+					$this->info[$array_key]  =  mysqli_fetch_all($result);
+				}
+				else{ if($error_msg!=false) die( json_encode(array('message' => 'ERROR', 'code' => $error_msg.' ◢▆▅崩▄▃▂╰(〒皿〒)╯▂▃▄潰▅▇◣')));	}
+			}
+			else{  if($error_msg!=false) die( json_encode(array('message' => 'ERROR', 'code' => '◢▆▅崩▄▃▂╰(〒皿〒)╯▂▃▄潰▅▇◣')));	}
 
-	//print_r($_POST);
-	print_r($info);
-	echo '<p id="respond-json">'.json_encode($info,JSON_NUMERIC_CHECK).'</p>';
-	echo	"</div></div>";
+			mysqli_close($link);	
+		}
+		
+		public function outputJSON(){
+			echo json_encode($this->info,JSON_NUMERIC_CHECK);	
+			unset($this->info); 
+		}
+		
+		public function monkeyWorks(){
+			if($this->works==='quicksearch'){
+				$this->getShippingProvider();
+				$this->getProductCost();
+				$this->getProductSellinfo();
+				$this->getSellPlatform();
+				$this->getShippingRecordInfo();
+			}
+			else if($this->works==='package_type'){
+				$this->getPackageType();
+			}
+			else{echo json_encode(array('message' => 'ERROR', 'code' => $_POST['query']));	}
+			
+			$this->outputJSON();
+		}
+	}	
 	
-
-/*
-if quick search only input sku->display the sku detail data
-else if quick search filled both fields->display cost by 3 shipping methods
-*/
+	$cm = new CodeMonkeys($_POST);
+	$cm->monkeyWorks();
 ?>

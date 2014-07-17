@@ -76,18 +76,18 @@
 						<form class="form-horizontal" id="quick-result-form" role="form" >
 							<div class="input-group">
 								<span class="input-group-addon">SKU</span>	
-								<input name="qs-sku" type="text" class="form-control" placeholder="sku input here  (ﾟ∀ﾟ)" required maxlength="8">
+								<input id="qs-sku" name="qs-sku" type="text" class="form-control" placeholder="sku input here  (ﾟ∀ﾟ)" required maxlength="8">
 							</div>
 							<div class="input-group">
-								<span class="input-group-addon">NTD</span>
+								<span class="input-group-addon">TWD</span>
 								
-								<input name="qs-shipcost" type="number" class="form-control">
+								<input id="qs-shipcost" name="qs-shipcost" type="number" value=0 class="form-control">
 								
 								<span class="input-group-addon">shipping cost</span>
 							</div>
 							
-							<select name="qs-seller" class="selectpicker" data-width="100%">	
-								<option>Select a Seller</option>
+							<select id="qs-seller" name="qs-seller" data-style="btn-primary"  class="selectpicker" data-width="100%">	
+								<option disabled="disabled">Select a Seller</option>
 							<?php
 								
 								$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
@@ -108,47 +108,8 @@
 							?>
 							</select>
 							
-							<button class="btn btn-danger fullwidth" type="submit">Go!</button>
-						</form>
-					</div>
-					
-					<div class="col-md-8">
-						<h1><span class="glyphicon glyphicon-flash"></span> Display</h1>
-						<div id="display-result">give me some info yo ლ(╹◡╹ლ)</div>
-					</div>
-
-				</div>
-				
-				<!-- Insert Area-->
-				<div class="row">
-					<div class="col-md-6">
-						<h1 ><span class="glyphicon glyphicon-tower"></span> Save This Result</h1>
-						<form class="form-horizontal" id="insert-data-form" >
-						
-							<div class="input-group">
-								<span class="input-group-addon">SKU</span>	
-								<input name="ia-sku" type="text" class="form-control" required maxlength="8">
-							</div>		
-													
-							<select name="ia-shipmethod" id="ia-shipmethod" class="selectpicker" data-style="btn-info" data-width="100%"></select>		
-							<select name="ia-package" id="ia-package" class="selectpicker" data-style="btn-info" data-width="100%"></select>	
-							
-							<div class="input-group">
-								<span class="input-group-addon">NTD</span>
-								<input name="ia-shipcost" type="number" class="form-control">			
-								<span class="input-group-addon">shipping cost</span>
-							</div>
-						
-					</div>
-				</div>
-				
-				<!-- Future Plan -->
-				<div class="row">
-					<div class="col-md-4">
-						<h1><span class="glyphicon glyphicon-th-list"></span> Statistic</h1>
-						
-							<select name="qs-country" class="selectpicker" data-style="btn-info" data-width="100%" data-live-search="true" data-dropup-auto="false">	
-								<option disabled="disabled">Country List</option>
+							<select name="qs-country" id="qs-country"class="selectpicker" data-style="btn-primary" data-width="100%" data-live-search="true" data-dropup-auto="false">	
+								<option value="-1">You May Select A Country</option>
 								
 								<?php
 									//generate country selector
@@ -161,7 +122,89 @@
 										echo '<option value="'.$row[1].'">'.$row[0]."</option>"; 
 									} 
 								?>
-															
+							
+							</select>			
+							
+							<button class="btn btn-danger fullwidth" type="submit">Go!</button>
+						</form>
+					</div>
+					
+					<!--Display Area-->
+					<div class="col-md-8">
+						<h1><span class="glyphicon glyphicon-flash"></span> Display Info</h1>
+						<div class='panel panel-primary'>
+							<div  id="display-result" class='panel-body'>
+								give me some info yo ლ(╹◡╹ლ)
+							</div>
+						</div>
+					</div>
+
+				</div>
+				
+				<!--  Save This Result -->
+				<div class="row">
+					<div class="col-md-6">
+						<div id="ia-div">
+							<h1 ><span class="glyphicon glyphicon-tower"></span> Save This Result</h1>
+							<form class="form-horizontal" id="insert-data-form" >
+											
+								<select name="ia-shipmethod" id="ia-shipmethod" class="selectpicker" data-style="btn-primary" data-width="100%"></select>		
+								<select name="ia-package" id="ia-package" class="selectpicker" data-style="btn-primary" data-width="100%"></select>	
+								<select name="ia-country" id="ia-country" class="selectpicker" data-style="btn-primary" data-width="100%" data-live-search="true" data-dropup-auto="false">	
+									<option value="-1">You May Select A Country</option>								
+								<?php
+									//generate country selector
+									$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
+									mysqli_set_charset ($link ,"utf8");
+									$query = 'SELECT name,iso_numeric FROM country_list ORDER BY name'; 
+									$result = mysqli_query($link, $query); 
+									while($row = mysqli_fetch_array($result)) { 
+										
+										echo '<option value="'.$row[1].'">'.$row[0]."</option>"; 
+									} 
+								?>				
+								</select>
+								<div class="input-group">
+									<span class="input-group-addon">SKU</span>	
+									<input id =  "ia-sku" name="ia-sku" type="text" class="form-control" required maxlength="8">
+								</div>						
+								
+								<div class="input-group">
+									<span class="input-group-addon">TWD</span>
+									<input id="ia-shipcost" name="ia-shipcost" type="number" class="form-control">			
+									<span class="input-group-addon">shipping cost</span>
+								</div>
+								
+								<button class="btn btn-danger fullwidth" type="submit">Save and Update</button>
+							</form>
+						</div>
+					</div>
+					
+					<div class="col-md-6">
+					
+					</div>
+				</div>
+				
+				<!-- Future Plan -->
+				<div class="row">
+					<div class="col-md-4">
+						<h1><span class="glyphicon glyphicon-th-list"></span> Statistic</h1>
+						
+							<select name="qs-country" class="selectpicker" data-style="btn-info" data-width="100%" data-live-search="true" data-dropup-auto="false">	
+								<option value="-1">You May Select A Country</option>
+								
+								<?php
+									//generate country selector
+									$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
+									mysqli_set_charset ($link ,"utf8");
+									$query = 'SELECT name,iso_numeric FROM country_list ORDER BY name'; 
+									$result = mysqli_query($link, $query); 
+									while($row = mysqli_fetch_array($result)) { 
+										
+										echo '<option value="'.$row[1].'">'.$row[0]."</option>"; 
+									} 
+								?>
+								
 							</select>	
 							
 						<div class="panel panel-primary">
