@@ -59,11 +59,6 @@
 			mysqli_close($link);	
 		}
 		
-		public function getTagsBySKU($sku){
-			$query = "SELECT tag FROM";
-			//$this->searchDB($query,'shipping_record',false);
-		}
-		
 		public function getDBLink(){
 			$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
 			if (mysqli_connect_errno()){ die( json_encode(array('message' => 'ERROR', 'code' => 'DB connect lost! 。゜゜(´□｀。)°゜。')));	}
@@ -104,9 +99,6 @@
 			}
 			else if ($this->works==='package_type'){
 				$this->getPackageType();
-			}
-			else if($this->works==='tag_search'){
-				$this->getTagsBySKU($_POST['tag-search']);
 			}
 			else{echo json_encode(array('message' => 'ERROR', 'code' => $_POST['query']));	}
 			

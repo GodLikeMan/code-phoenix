@@ -30,10 +30,6 @@ $(document).ready(function(){
 		$("#ia-package").html(str).selectpicker('refresh');
 	}
 	
-	function initModifyShippingRecord(){
-		
-	}
-	
 	function displayBasicInfo(json){
 		var  info = $.parseJSON(json);
 		var  str ='';	
@@ -189,21 +185,10 @@ $(document).ready(function(){
 	$('.selectpicker').selectpicker();
 	
 	//What's up doc?
-	$('form').on('focusin focusout',function(){
-		$(this).children('h1').children('i').toggleClass('fa-spin');
-	});
-	
-	$("#tag-operate-form").on( "submit", function() {
-	
-		event.preventDefault();
-			
-		$.post("code-monkeys.php",$(this).serialize()+'&query=tag_search',function(json){
-				console.log(json);
-				
-				var	info = $.parseJSON(json);//parser json for check operate success or failed
-				
-				
-		});
+	$('.fa-spin').on('click',function(){
+
+		$(this).toggleClass('fa-spin');
+
 	});
 	
 });
