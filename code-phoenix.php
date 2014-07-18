@@ -71,9 +71,10 @@
 				<div class="row">
 					<!-- input Sku -->
 					<div class="col-md-4">
-						<h1><i id="whatsupdoc" class="fa fa-user-md fa-spin fa-fw"></i> Quick Result</h1>
+						
 						
 						<form class="form-horizontal" id="quick-result-form" role="form" >
+						<h1><i id="whatsupdoc" class="fa fa-user-md fa-fw"></i> Quick Result</h1>
 							<div class="input-group">
 								<span class="input-group-addon">SKU</span>	
 								<input id="qs-sku" name="qs-sku" type="text" class="form-control" placeholder="sku input here  (ﾟ∀ﾟ)" required maxlength="8">
@@ -145,9 +146,9 @@
 				<div id="update-row" class="row">
 					<div class="col-md-6">
 						<div id="ia-div">
-							<h1 ><i class="fa fa-thumbs-o-up fa-spin fa-fw"></i> Save This Result</h1>
+							
 							<form class="form-horizontal" id="update-shipping-record-form" >
-											
+								<h1 ><i class="fa fa-thumbs-o-up fa-fw"></i> Save This Result</h1>			
 								<select name="ia-shipmethod" id="ia-shipmethod" class="selectpicker" data-style="btn-primary" data-width="100%"></select>		
 								<select name="ia-package" id="ia-package" class="selectpicker" data-style="btn-primary" data-width="100%"></select>	
 								<select name="ia-country" id="ia-country" class="selectpicker" data-style="btn-primary" data-width="100%" data-live-search="true" data-dropup-auto="false">	
@@ -165,8 +166,8 @@
 								?>				
 								</select>
 								<div class="input-group">
-								<span class="input-group-addon">Seller</span>	
-								<input id="ia-seller" name="ia-seller" class="form-control" readonly >
+									<span class="input-group-addon">Seller</span>	
+									<input id="ia-seller" name="ia-seller" class="form-control" readonly >
 								</div>	
 								<div class="input-group">
 									<span class="input-group-addon">SKU</span>	
@@ -226,14 +227,30 @@
 					<div class="col-md-8">
 						<h1><i class="fa fa-wrench  fa-fw"></i> Modify</h1>
 						<ul class="nav nav-pills" role="tablist" id="search-area">
-							<li class="active"><a href="#home" role="tab" data-toggle="tab">Seller Accounts</a></li>
+						
+							<li class="active"><a href="#sr-tab" role="tab" data-toggle="tab">Shipping Records</a></li>
+							<li><a href="#home" role="tab" data-toggle="tab">Seller Accounts</a></li>
 							<li><a href="#profile" role="tab" data-toggle="tab">Shipping Providers</a></li>
 							<li><a href="#messages" role="tab" data-toggle="tab">Package Types</a></li>
 							<li><a href="#settings" role="tab" data-toggle="tab">Settings</a></li>
 						</ul>
 
 						<div class="tab-content">
-							<div class="tab-pane active" id="home">...</div>
+							<div class="tab-pane active" id="sr-tab">
+								<table class="table table-hover">
+								<?php
+									//generate country selector
+									$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
+									mysqli_set_charset ($link ,"utf8");
+									$query = 'SELECT sr.id, sr.sku, cl.name, sr.s_cost, sp.name, sr.date_modified FROM shipping_record as sr,country_list as cl,shipping_provider as sp WHERE sr.country_code =cl.iso_numeric AND sr.s_provider = sp.id'; 
+									$result = mysqli_query($link, $query); 
+									while($row = mysqli_fetch_array($result)) { 
+										echo('<tr><td>'.$row[0].'</td><td>'.$row[1].'</td><td>'.$row[2].'</td><td>'.$row[3].'</td><td>'.$row[4].'</td><td>'.$row[5].'</td></tr>');	
+									} 
+								?>
+								</table>
+							</div>
+							<div class="tab-pane" id="home">...</div>
 							<div class="tab-pane" id="profile">...</div>
 							<div class="tab-pane" id="messages">...</div>
 							<div class="tab-pane" id="settings">...</div>
@@ -241,6 +258,23 @@
 					</div>
 				</div>
 				
+				<!-- Tag System Dev Area -->
+				<div class="row">
+					<div class="col-md-6">
+						<div >
+							<form class="form-horizontal" id="tag-operate-form" role="form" >
+								<h1><i class="fa fa-bug"></i> Tag System Develop</h1>
+								<div class="input-group">
+									<span class="input-group-addon">SKU</span>	
+									<input id="tag-search" name="tag-search" class="form-control">
+								</div>	
+								
+								<button id="tag-submit" class="btn btn-danger fullwidth" type="submit">Here We Go ~</button>
+								
+							</form>
+						</div>
+					</div>
+				</div>
 			</div>
 			
 		</div>
