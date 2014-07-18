@@ -71,7 +71,7 @@
 				<div class="row">
 					<!-- input Sku -->
 					<div class="col-md-4">
-						<h1><span class="glyphicon glyphicon-fire"></span> Quick Result</h1>
+						<h1><i id="whatsupdoc" class="fa fa-user-md fa-spin fa-fw"></i> Quick Result</h1>
 						
 						<form class="form-horizontal" id="quick-result-form" role="form" >
 							<div class="input-group">
@@ -109,7 +109,7 @@
 							</select>
 							
 							<select name="qs-country" id="qs-country"class="selectpicker" data-style="btn-primary" data-width="100%" data-live-search="true" data-dropup-auto="false">	
-								<option value="-1">You May Select A Country</option>
+								<option value="999">You May Select A Country</option>
 								
 								<?php
 									//generate country selector
@@ -131,7 +131,7 @@
 					
 					<!--Display Area-->
 					<div class="col-md-8">
-						<h1><span class="glyphicon glyphicon-flash"></span> Display Info</h1>
+						<h1><i class="fa fa-database fa-fw"></i> Display Info</h1>
 						<div class='panel panel-primary'>
 							<div  id="display-result" class='panel-body'>
 								give me some info yo ლ(╹◡╹ლ)
@@ -141,17 +141,17 @@
 
 				</div>
 				
-				<!--  Save This Result -->
-				<div class="row">
+				<!--  Update This Result to DB-->
+				<div id="update-row" class="row">
 					<div class="col-md-6">
 						<div id="ia-div">
-							<h1 ><span class="glyphicon glyphicon-tower"></span> Save This Result</h1>
-							<form class="form-horizontal" id="insert-data-form" >
+							<h1 ><i class="fa fa-thumbs-o-up fa-spin fa-fw"></i> Save This Result</h1>
+							<form class="form-horizontal" id="update-shipping-record-form" >
 											
 								<select name="ia-shipmethod" id="ia-shipmethod" class="selectpicker" data-style="btn-primary" data-width="100%"></select>		
 								<select name="ia-package" id="ia-package" class="selectpicker" data-style="btn-primary" data-width="100%"></select>	
 								<select name="ia-country" id="ia-country" class="selectpicker" data-style="btn-primary" data-width="100%" data-live-search="true" data-dropup-auto="false">	
-									<option value="-1">You May Select A Country</option>								
+									<option value="999">You Must Select A Country</option>								
 								<?php
 									//generate country selector
 									$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
@@ -165,8 +165,12 @@
 								?>				
 								</select>
 								<div class="input-group">
+								<span class="input-group-addon">Seller</span>	
+								<input id="ia-seller" name="ia-seller" class="form-control" readonly >
+								</div>	
+								<div class="input-group">
 									<span class="input-group-addon">SKU</span>	
-									<input id =  "ia-sku" name="ia-sku" type="text" class="form-control" required maxlength="8">
+									<input id =  "ia-sku" name="ia-sku" type="text" class="form-control" required maxlength="8" readonly>
 								</div>						
 								
 								<div class="input-group">
@@ -175,13 +179,18 @@
 									<span class="input-group-addon">shipping cost</span>
 								</div>
 								
-								<button class="btn btn-danger fullwidth" type="submit">Save and Update</button>
+								<button id="ia-submit" class="btn btn-danger fullwidth" type="submit">Save and Update</button>
 							</form>
 						</div>
 					</div>
 					
+					<!-- Extra Info-->
 					<div class="col-md-6">
-					
+						<h1 ><span class="glyphicon glyphicon-asterisk"></span> Extra Info</h1>
+						<div  class="panel panel-info">
+							<div  id="ei-div" class='panel-body'></div>
+						</div>
+						
 					</div>
 				</div>
 				
@@ -215,7 +224,7 @@
 					</div>
 					
 					<div class="col-md-8">
-						<h1><span class="glyphicon glyphicon-wrench"></span> Modify</h1>
+						<h1><i class="fa fa-wrench  fa-fw"></i> Modify</h1>
 						<ul class="nav nav-pills" role="tablist" id="search-area">
 							<li class="active"><a href="#home" role="tab" data-toggle="tab">Seller Accounts</a></li>
 							<li><a href="#profile" role="tab" data-toggle="tab">Shipping Providers</a></li>

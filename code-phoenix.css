@@ -32,5 +32,7 @@
 /* Misc
 ---------------------------------------------------*/	
 
-#ia-div{display:none;}
+#update-row{display:none;}
 #display-result{font-weight:bold;}
+.capitalize { text-transform:capitalize;}
+#ei-div{min-height:230px;}

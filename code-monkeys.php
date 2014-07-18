@@ -35,17 +35,40 @@
 			$this->searchDB($query,'package_type','Package Type Error');
 		}
 		
-		public function getShippingRecordInfo(){
+		public function getShippingRecordInfo($country){
 			
-			$query = 'SELECT cl.name,avg(sr.s_cost)  FROM shipping_record AS sr,country_list AS cl WHERE  sku="'.$_POST['qs-sku'].'" AND sr.country_code = cl.iso_numeric GROUP BY cl.name ';
+			if($country === '999' ){
+				$query = 'SELECT cl.name,avg(sr.s_cost)  FROM shipping_record AS sr,country_list AS cl WHERE  sku="'.$_POST['qs-sku'].'" AND sr.country_code = cl.iso_numeric GROUP BY cl.name ';			
+			}
+			else{
+				$query = 'SELECT cl.name,sr.s_cost,sr.date_modified  FROM shipping_record AS sr,country_list AS cl WHERE (sku="'.$_POST['qs-sku'].'" AND sr.country_code  = "'.$country.'") AND sr.country_code = cl.iso_numeric ORDER BY sr.date_modified LIMIT 5 ';
+			}	
+		
 			$this->searchDB($query,'shipping_record',false);
+		}
+		
+		public function insertShippingRecordInfo(){
+			$query = 'INSERT INTO shipping_record (sku,country_code,s_cost,s_provider) VALUES ("'.$_POST['ia-sku'].'","'.$_POST['ia-country'].'","'.$_POST['ia-shipcost'].'","'.$_POST['ia-shipmethod'].'" )';
+			$link = $this->getDBLink();
+			
+			if($result = mysqli_query($link, $query)){
+	
+				$this->info['new_record']  =  $result;
+
+			}		
+			mysqli_close($link);	
+		}
+		
+		public function getDBLink(){
+			$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
+			if (mysqli_connect_errno()){ die( json_encode(array('message' => 'ERROR', 'code' => 'DB connect lost! 。゜゜(´□｀。)°゜。')));	}
+			mysqli_set_charset ($link ,"utf8");	
+			return $link;
 		}
 		
 		public function searchDB($query,$array_key,$error_msg){
 		
-			$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
-			if (mysqli_connect_errno()){ die( json_encode(array('message' => 'ERROR', 'code' => 'DB connect lost! 。゜゜(´□｀。)°゜。')));	}
-			mysqli_set_charset ($link ,"utf8");	
+			$link = $this->getDBLink();
 			
 			if($result = mysqli_query($link, $query)){
 				if(mysqli_num_rows($result)>0){
@@ -64,14 +87,17 @@
 		}
 		
 		public function monkeyWorks(){
-			if($this->works==='quicksearch'){
+			if($this->works==='qs'){
 				$this->getShippingProvider();
 				$this->getProductCost();
 				$this->getProductSellinfo();
 				$this->getSellPlatform();
-				$this->getShippingRecordInfo();
+				$this->getShippingRecordInfo($_POST['qs-country']);
 			}
-			else if($this->works==='package_type'){
+			else if ($this->works==='ia'){
+				$this->insertShippingRecordInfo();
+			}
+			else if ($this->works==='package_type'){
 				$this->getPackageType();
 			}
 			else{echo json_encode(array('message' => 'ERROR', 'code' => $_POST['query']));	}
