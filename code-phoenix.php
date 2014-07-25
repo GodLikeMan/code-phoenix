@@ -93,17 +93,19 @@
 								
 								$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
 								mysqli_set_charset ($link ,"utf8");
-								$query = 'SELECT * FROM seller GROUP BY sell_platform'; 
+								$query = 'SELECT * FROM seller ORDER BY sell_platform'; 
 								$result = mysqli_query($link, $query); 
 								$group_tag = "";
 								while($row = mysqli_fetch_array($result)) { 
-									if(!($group_tag===$row['sell_platform'])){
+								
+									if($group_tag!=$row['sell_platform']){
 										echo('<optgroup label="'.$row['sell_platform'].'" >');
 									}	
 									echo('<option value="'.$row['id'].'">'.$row['name']."</option>"); 
-									if(!($group_tag===$row['sell_platform'])){
+									$group_tag=$row['sell_platform'];
+									
+									if(($group_tag!=$row['sell_platform'])and($group_tag!="")){
 										echo('</optgroup>');
-										$group_tag=$row['sell_platform'];
 									}										
 								} 								
 							?>
@@ -128,6 +130,24 @@
 							
 							<button class="btn btn-danger fullwidth" type="submit">Go!</button>
 						</form>
+						
+						<hr>
+						<!-- Quick Search For sell price and shipping price-->
+						<h3>Listing Price Operator</h3>
+						<form>
+							<div class="input-group">
+								<span class="input-group-addon">Sell Price</span>	
+								<input id="lp-sell-price" name="" type="number" class="form-control" >
+								<span class="input-group-addon">[currency]</span>	
+							</div>
+							<div class="input-group">
+								<span class="input-group-addon">Shipping Price</span>	
+								<input id="" name="" type="number" class="form-control" >
+								<span class="input-group-addon">[currency]</span>	
+							</div>
+							<button class="btn btn-danger fullwidth" type="button">test</button>
+						</form>
+						
 					</div>
 					
 					<!--Display Area-->
@@ -237,18 +257,22 @@
 
 						<div class="tab-content">
 							<div class="tab-pane active" id="sr-tab">
-								<table class="table table-hover">
+							
 								<?php
-									//generate country selector
+									//generate  shipping record table
+									echo('<table class="table table-hover">');
+									
 									$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
 									mysqli_set_charset ($link ,"utf8");
-									$query = 'SELECT sr.id, sr.sku, cl.name, sr.s_cost, sp.name, sr.date_modified FROM shipping_record as sr,country_list as cl,shipping_provider as sp WHERE sr.country_code =cl.iso_numeric AND sr.s_provider = sp.id'; 
+									$query = 'SELECT sr.id, sr.sku, cl.name, sr.s_cost,  sr.date_modified FROM shipping_record as sr,country_list as cl WHERE sr.country_code =cl.iso_numeric '; 
 									$result = mysqli_query($link, $query); 
 									while($row = mysqli_fetch_array($result)) { 
-										echo('<tr><td>'.$row[0].'</td><td>'.$row[1].'</td><td>'.$row[2].'</td><td>'.$row[3].'</td><td>'.$row[4].'</td><td>'.$row[5].'</td></tr>');	
-									} 
+										echo('<tr><td>'.$row[0].'</td><td>'.$row[1].'</td><td>'.$row[2].'</td><td>'.$row[3].'</td><td>'.$row[4].'</td></tr>');	
+									}
+									echo("</table>");
 								?>
-								</table>
+								
+								
 							</div>
 							<div class="tab-pane" id="home">...</div>
 							<div class="tab-pane" id="profile">...</div>

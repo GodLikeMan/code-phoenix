@@ -1,19 +1,18 @@
 $(document).ready(function(){
 
 	function initShippingProvider(json){
-
 		var	info = $.parseJSON(json);
 		var	str ='';
-	
+		
 		for(var i=0;i<info.shipping_provider.length;i++){
 		
 			str += '<option value="'+info.shipping_provider[i][0]+'">'+info.shipping_provider[i][1]+'</option>';
 		}
-
+		
 		$("#ia-shipmethod").html(str).selectpicker('refresh');
 		
 		//ajax for package type init
-		$.post("code-monkeys.php",{'ia-shipmethod':1,'query':'package_type'}
+		$.post("code-monkeys.php",{'shipping_provider':$('#ia-shipmethod :selected').text(),'query':'package_type'}
 		).done(function(json){
 			initPackageTypeSelector(json);
 		});
@@ -22,7 +21,7 @@ $(document).ready(function(){
 	function initPackageTypeSelector(json){
 		var	info = $.parseJSON(json);
 		var	str ='';		
-		
+
 		for(var i=0;i<info.package_type.length;i++){
 			str += '<option value="'+info.package_type[i][0]+'">'+info.package_type[i][1]+'</option>';	
 		}	
@@ -33,6 +32,8 @@ $(document).ready(function(){
 	function initModifyShippingRecord(){
 		
 	}
+	
+	
 	
 	function displayBasicInfo(json){
 		var  info = $.parseJSON(json);
@@ -69,17 +70,36 @@ $(document).ready(function(){
 			str += '<table id="ship-record-table" class="table table-hover">';
 			
 			if($('#qs-country').val() == '999'){
-			
+					
 				str  += '<thead><tr><th>國家</th><th>平均實際運費 (TWD)</th></tr></thead><tbody>';	
 				for(var i=0;i<info.shipping_record.length;i++){
-					str += '<td>'+info.shipping_record[i][0]+'</td><td> '+info.shipping_record[i][1]+'</td></tr>';
-				}				
-				
+					str +=  '<tr><td>'+info.shipping_record[i][0]+'</td><td> '+info.shipping_record[i][1]+'</td></tr>';				
+				}			
 			}
 			else{
-				str  += '<thead><tr><th>國家</th><th>實際運費 (TWD)</th><th>修改日期</th></tr></thead><tbody>';	
+				str  += '<thead><tr><th>國家</th><th>實際運費 (TWD)</th><th>Shipping Provider</th><th>Package Type</th></tr></thead><tbody>';	
 				for(var i=0;i<info.shipping_record.length;i++){
-					str += '<td>'+info.shipping_record[i][0]+'</td><td> '+info.shipping_record[i][1]+'</td><td>'+info.shipping_record[i][2]+'</td></tr>';
+					str += '<td>'+info.shipping_record[i][1]+'</td><td> '+info.shipping_record[i][2]+'</td>';
+					
+					//get shipping record tags by tag parser
+					$.ajax({
+					  type: "POST",
+					  url: "code-monkeys.php",
+					  data: {'sr_id': info.shipping_record[i][0] ,'query':'sr_tag'},
+					  async: false
+					})
+					  .done(function( json ) {
+						var	tags = $.parseJSON(json);
+						//console.log(tags.sr_tag);
+						
+						for(var j=0;j<tags.sr_tag.length;j++){
+							str +=	'<td>'+tags.sr_tag[j][1]+'</td>';
+						}						
+						
+					  });						
+					
+					str+='</tr>';
+
 				}				
 			}
 			str += '</tbody></table>';
@@ -101,7 +121,7 @@ $(document).ready(function(){
 	
 	//will change package type select
 	$("#ia-shipmethod").on("change",function(){
-		$.post("code-monkeys.php",$(this).serialize()+'&query=package_type'
+		$.post("code-monkeys.php",{'shipping_provider':$('#ia-shipmethod :selected').text(),'query':'package_type'}
 			
 		).done(function(json){
 			initPackageTypeSelector(json);
@@ -120,7 +140,7 @@ $(document).ready(function(){
 		
 		$.post("code-monkeys.php",$(this).serialize()+'&query=qs',function(json){
 			
-			console.log(json);//show response
+			//console.log(json);//show response
 			var	info = $.parseJSON(json);
 
 			if(info['message']=='ERROR'){
@@ -137,7 +157,7 @@ $(document).ready(function(){
 				$('#ia-seller').val($('#qs-seller :selected').text());
 				$('#ia-country').selectpicker('val',$('#qs-country option:selected').val() );
 				
-				 displayUpdateRow();
+				displayUpdateRow();
 			}
 		});
 	});
@@ -160,7 +180,7 @@ $(document).ready(function(){
 			$('#ia-submit').prop('disabled',true);
 			
 			$.post("code-monkeys.php",$(this).serialize()+'&query=ia',function(json){
-				console.log(json);
+				//console.log(json);
 				
 				var	info = $.parseJSON(json);//parser json for check operate success or failed
 				
