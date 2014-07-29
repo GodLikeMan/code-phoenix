@@ -80,9 +80,11 @@
 								<input id="qs-sku" name="qs-sku" type="text" class="form-control" placeholder="sku input here  (ﾟ∀ﾟ)" required maxlength="8">
 							</div>
 							<div class="input-group">
+								<span class="input-group-addon">TWD</span>
+								
+								<input id="qs-shipcost" name="qs-shipcost" type="number" value=0 class="form-control">
+								
 								<span class="input-group-addon">shipping cost</span>
-								<input id="qs-shipcost" name="qs-shipcost" type="number" value="0"  min="0" class="form-control">
-								<span class="input-group-addon">TWD</span>	
 							</div>
 							
 							<select id="qs-seller" name="qs-seller" data-style="btn-primary"  class="selectpicker" data-width="100%">	
@@ -132,18 +134,18 @@
 						<hr>
 						<!-- Quick Search For sell price and shipping price-->
 						<h3>Listing Price Operator</h3>
-						<form class="form-horizontal" id="listing-price-form" role="form" >
+						<form>
 							<div class="input-group">
 								<span class="input-group-addon">Sell Price</span>	
-								<input id="lp-sell-price" name="lp-sell-price" type="number"  step="0.01" min="0" class="form-control" >
-								<span  class="input-group-addon currency_tag">[currency]</span>	
+								<input id="lp-sell-price" name="" type="number" class="form-control" >
+								<span class="input-group-addon">[currency]</span>	
 							</div>
 							<div class="input-group">
 								<span class="input-group-addon">Shipping Price</span>	
-								<input id="lp-shipping" name="lp-shipping" type="number" step="0.01" min="0" class="form-control" >
-								<span class="input-group-addon currency_tag">[currency]</span>	
+								<input id="" name="" type="number" class="form-control" >
+								<span class="input-group-addon">[currency]</span>	
 							</div>
-							<button class="btn btn-danger fullwidth" type="submit">test</button>
+							<button class="btn btn-danger fullwidth" type="button">test</button>
 						</form>
 						
 					</div>
