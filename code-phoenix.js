@@ -33,32 +33,49 @@ $(document).ready(function(){
 		
 	}
 	
-	
+	function setQSCookies(json){
+		var	info = $.parseJSON(json);
+		
+		$.cookie('sell_price', info.product_sellinfo[0][0].toFixed(2));//售價	
+		$.cookie('ship_price', info.product_sellinfo[0][1].toFixed(2));//收取運費
+		$.cookie('currency_rate', 30);//匯率
+		$.cookie('currency',info.product_sellinfo[0][2]);//貨幣
+		$.cookie('ship_cost', parseInt($('#qs-shipcost').val()));//實際花費運費 (TWD)
+		$.cookie('total_income',($.cookie('sell_price',Number)+$.cookie('ship_price',Number)).toFixed(2));//售價加上運費
+		$.cookie('commission_cost',($.cookie('total_income',Number)*0.2).toFixed(2));//被抽成金額
+		$.cookie('total_cost',parseInt(info.product_cost)+$.cookie('commission_cost',Number)*$.cookie('currency_rate',Number)+$.cookie('ship_cost',Number));//產品成本+被抽成金額*匯率+實際花費運費 (TWD)
+		console.log($.cookie());
+	}
+
 	
 	function displayBasicInfo(json){
-		var  info = $.parseJSON(json);
-		var  str ='';	
-		var  msg ='';
+		var	info = $.parseJSON(json);
+		var	str ='';	
+		var	msg ='';
 		
-		var  currency = info.product_sellinfo[0][2];
-		var  ship_cost = parseInt($('#qs-shipcost').val());//twd
-		var  total_income = (info.product_sellinfo[0][0]+info.product_sellinfo[0][1]);
-		var  commission_cost = Math.round(total_income *0.2);
-		var  total_cost = parseInt(info.product_cost)+ commission_cost *30 +ship_cost;//twd
+		var	sell_price = info.product_sellinfo[0][0];
+		var	shipping_price = info.product_sellinfo[0][1];
+		
+		var	currency_rate = 30;
+		var	currency = info.product_sellinfo[0][2];
+		var	ship_cost = parseInt($('#qs-shipcost').val());//twd
+		var	total_income = sell_price + shipping_price;
+		var	commission_cost = (total_income *0.2).toFixed(2);
+		var	total_cost = parseInt(info.product_cost)+ commission_cost *30 +ship_cost;//twd
 		
 		
 		str += '<ul class="list-group">';
 		
 		str += '<li class="list-group-item capitalize">平台 = '+info.sell_platform+'</li>';
-		str += '<li class="list-group-item list-group-item-success">售價 = '+Math.round(info.product_sellinfo[0][0]*30)+' TWD ( '+info.product_sellinfo[0][0]+' '+currency+' )</li>';
-		str += '<li class="list-group-item list-group-item-success">收取運費 = '+Math.round(info.product_sellinfo[0][1]*30)+' TWD ( '+info.product_sellinfo[0][1]+' '+currency+' )</li>';
+		str += '<li id="dbi-price" class="list-group-item list-group-item-success" data-display-price="'+sell_price.toFixed(2)+'" data-display-currency="'+currency+'" >售價 = '+(sell_price*currency_rate).toFixed(2)+' TWD ( '+sell_price.toFixed(2)+' '+currency+' )</li>';
+		str += '<li id="dbi-ship-price" class="list-group-item list-group-item-success" data-display-ship-price="'+shipping_price.toFixed(2)+'" data-display-currency="'+currency+'" > 收取運費 = '+(shipping_price*currency_rate).toFixed(2)+' TWD ( '+shipping_price.toFixed(2)+' '+currency+' )</li>';
 		str += '<li class="list-group-item list-group-item-danger">成本 = '+parseInt(info.product_cost)+' TWD</li>';
-		str += '<li class="list-group-item list-group-item-danger">平台抽成 = '+commission_cost*30+' TWD ( '+commission_cost+' '+currency+' )</li>';
+		str += '<li class="list-group-item list-group-item-danger">平台抽成 = '+(commission_cost*currency_rate).toFixed(2)+' TWD ( '+commission_cost+' '+currency+' )</li>';
 		str += '<li class="list-group-item list-group-item-danger">實際運費 = '+ship_cost+' TWD</li>';
 		if((total_income*30-total_cost)<=0){msg='   <span class="label label-danger">虧損</span>';}
-		str += '<li class="list-group-item list-group-item-info">預估淨利 = '+Math.round(total_income*30-total_cost)+' TWD'+msg+'</li>';
-		str += '<li class="list-group-item">總收入 = '+total_income*30+' TWD</li>';
-		str += '<li class="list-group-item">總支出 = '+total_cost+' TWD</li>';
+		str += '<li class="list-group-item list-group-item-info">預估淨利 = '+(total_income*currency_rate-total_cost).toFixed(2)+' TWD'+msg+'</li>';
+		str += '<li class="list-group-item">總收入 = '+(total_income*currency_rate).toFixed(2)+' TWD</li>';
+		str += '<li class="list-group-item">總支出 = '+total_cost.toFixed(2)+' TWD</li>';
 		
 		
 		//Display Shipping Records
@@ -151,15 +168,35 @@ $(document).ready(function(){
 				initShippingProvider( json );
 				displayBasicInfo(json);
 				
+				setQSCookies(json);
+				
 				//assign Quick Result form values to Save This Result form 
 				$('#ia-sku').val($('#qs-sku').val());
 				$('#ia-shipcost').val($('#qs-shipcost').val());
 				$('#ia-seller').val($('#qs-seller :selected').text());
 				$('#ia-country').selectpicker('val',$('#qs-country option:selected').val() );
 				
+				//assign Quick Result form values to Listing Price form
+				$('#lp-sell-price').val($("#dbi-price").data("display-price"));
+				$('#lp-ship-price').val($("#dbi-ship-price").data( "display-ship-price"));
+				$(".currency_tag").text($("#dbi-price").data("display-currency"));
+
+				
 				displayUpdateRow();
 			}
 		});
+	});
+	
+	$("#listing-price-form").on("submit",function() {
+		event.preventDefault();
+		
+		var price = $('#lp-sell-price').val();
+		var shipping = $('#lp-shipping').val();
+		
+		
+
+		console.log(price);
+		console.log(shipping);
 	});
 	
 	function showMsg(msg,type,obj){
@@ -197,7 +234,6 @@ $(document).ready(function(){
 				
 				setTimeout(function(){ $('#ia-submit').prop('disabled',false); }, 3000);
 					
-			
 				//show msg about this operate
 				
 			});

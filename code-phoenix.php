@@ -13,6 +13,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.5.4/bootstrap-select.min.js"></script>
+		<script src="lib/jquery.cookie-1.4.1.min.js"></script>
 		<script src="code-phoenix.js"></script>
 	
 	</head>
@@ -80,11 +81,9 @@
 								<input id="qs-sku" name="qs-sku" type="text" class="form-control" placeholder="sku input here  (ﾟ∀ﾟ)" required maxlength="8">
 							</div>
 							<div class="input-group">
-								<span class="input-group-addon">TWD</span>
-								
-								<input id="qs-shipcost" name="qs-shipcost" type="number" value=0 class="form-control">
-								
 								<span class="input-group-addon">shipping cost</span>
+								<input id="qs-shipcost" name="qs-shipcost" type="number" value="0"  min="0" class="form-control">
+								<span class="input-group-addon">TWD</span>	
 							</div>
 							
 							<select id="qs-seller" name="qs-seller" data-style="btn-primary"  class="selectpicker" data-width="100%">	
@@ -134,18 +133,18 @@
 						<hr>
 						<!-- Quick Search For sell price and shipping price-->
 						<h3>Listing Price Operator</h3>
-						<form>
+						<form class="form-horizontal" id="listing-price-form" role="form" >
 							<div class="input-group">
 								<span class="input-group-addon">Sell Price</span>	
-								<input id="lp-sell-price" name="" type="number" class="form-control" >
-								<span class="input-group-addon">[currency]</span>	
+								<input id="lp-sell-price" name="lp-sell-price" type="number"  step="0.01" min="0" class="form-control" >
+								<span  class="input-group-addon currency_tag">[currency]</span>	
 							</div>
 							<div class="input-group">
 								<span class="input-group-addon">Shipping Price</span>	
-								<input id="" name="" type="number" class="form-control" >
-								<span class="input-group-addon">[currency]</span>	
+								<input id="lp-ship-price" name="lp-ship-price" type="number" step="0.01" min="0" class="form-control" >
+								<span class="input-group-addon currency_tag">[currency]</span>	
 							</div>
-							<button class="btn btn-danger fullwidth" type="button">test</button>
+							<button class="btn btn-danger fullwidth" type="submit">test</button>
 						</form>
 						
 					</div>
