@@ -6,7 +6,7 @@ USE ampro;
 *	名稱		:	product
 *	功能		:	產品基本資料
 *
-*	PRIMARY KEY  = id
+*	PRIMARY KEY  = sku
 *
 *	sku					:	商品代碼
 *	name				:	商品全名
@@ -51,6 +51,33 @@ CREATE TABLE IF NOT EXISTS `product_sellinfo`
 
 
 /*
+*	名稱					:	product_modify_record
+*	功能					:	產品修改紀錄
+*
+*	PRIMARY KEY  = id
+*
+*	sku						:	商品代碼
+*	seller_id				:	賣家對應id
+*	price					:	販賣價格
+*	s_price				:	收取運費價格
+*	currency			:	價格幣別
+*	date_created	:	輸入資料庫日期	
+*/
+CREATE TABLE IF NOT EXISTS `product_modify_record`
+(
+	`id` INT AUTO_INCREMENT,
+	`sku` VARCHAR(8),
+	`seller_id` TINYINT UNSIGNED,
+	`price` DECIMAL(6,2) NOT NULL DEFAULT 0,
+	`s_price`	DECIMAL(5,2) NOT NULL DEFAULT 0,
+	`currency` CHAR(3) NOT NULL DEFAULT 'USD',
+	`date_created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	PRIMARY KEY (`id`)
+	
+)ENGINE InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+
+/*
 *	名稱		:	shipping_record
 *	功能		:	記錄商品運費
 *
@@ -83,7 +110,7 @@ CREATE TABLE IF NOT EXISTS `shipping_record`
 *
 *	PRIMARY KEY  = id
 *
-*   sku         :	產品代碼
+*  sku         :	產品代碼
 *	p_type	:	包裝類型
 *	p_length	:	包裝長度，單位公分，整數
 *	p_width	:	包裝寬度，單位公分，整數

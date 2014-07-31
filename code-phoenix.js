@@ -1,5 +1,27 @@
 $(document).ready(function(){
+	
+	//on hover switch views
+	$('#search-area a').on('mouseover',function(){
+		event.preventDefault();
+		$(this).tab('show');
+	});
+	
+	//Test for product save
+	$('#test-db-save').on('click',function(){
+	
+		$.post("code-monkeys.php",$(this).serialize()+'&query=update-',function(json){
+		
+			var	info = $.parseJSON(json);
 
+			if(info['message']=='ERROR'){
+				$("#display-result").html('<p>'+info.code+'</p>');
+			}
+			else{
+	
+			}
+		});		
+	});
+	
 	function initShippingProvider(json){
 		var	info = $.parseJSON(json);
 		var	str ='';
@@ -33,57 +55,99 @@ $(document).ready(function(){
 		
 	}
 	
-	function setQSCookies(json){
+	function currencyConvert(c){
+		return (parseFloat(c)*$.cookie('currencyExchangeRate',Number));
+	}
+	
+	function addLabel(type,text){
+		return '<span class="label '+type+'">'+text+'</span>';
+	}
+	
+	function setCookies(json){
 		var	info = $.parseJSON(json);
 		
-		$.cookie('sell_price', info.product_sellinfo[0][0].toFixed(2));//售價	
-		$.cookie('ship_price', info.product_sellinfo[0][1].toFixed(2));//收取運費
-		$.cookie('currency_rate', 30);//匯率
+		
+		$.cookie('sku',info.product_cost[0][1]);
+		$.cookie('sellerId',info.product_sellinfo[0][3]);
+		$.cookie('sellPlatform',info.sell_platform);
+		$.cookie('productPrice', info.product_sellinfo[0][0].toFixed(2));//售價	
+		$.cookie('shipPrice', info.product_sellinfo[0][1].toFixed(2));//收取運費
+		$.cookie('currencyExchangeRate', 30);//匯率
 		$.cookie('currency',info.product_sellinfo[0][2]);//貨幣
-		$.cookie('ship_cost', parseInt($('#qs-shipcost').val()));//實際花費運費 (TWD)
-		$.cookie('total_income',($.cookie('sell_price',Number)+$.cookie('ship_price',Number)).toFixed(2));//售價加上運費
-		$.cookie('commission_cost',($.cookie('total_income',Number)*0.2).toFixed(2));//被抽成金額
-		$.cookie('total_cost',parseInt(info.product_cost)+$.cookie('commission_cost',Number)*$.cookie('currency_rate',Number)+$.cookie('ship_cost',Number));//產品成本+被抽成金額*匯率+實際花費運費 (TWD)
+		$.cookie('totalIncome',($.cookie('productPrice',Number)+$.cookie('shipPrice',Number)));//售價加上運費
+		$.cookie('commissionCost',($.cookie('totalIncome',Number)*0.2).toFixed(2));//被抽成金額
+		$.cookie('productCost',info.product_cost[0][0]);
+		$.cookie('totalCost',parseInt(info.product_cost)+currencyConvert($.cookie('commissionCost',Number))+$.cookie('shipCost',Number));//產品成本+被抽成金額*匯率+實際花費運費 (TWD)
 		console.log($.cookie());
 	}
 
 	
-	function displayBasicInfo(json){
-		var	info = $.parseJSON(json);
-		var	str ='';	
-		var	msg ='';
+	function generateBasicInfoValues() {
 		
-		var	sell_price = info.product_sellinfo[0][0];
-		var	shipping_price = info.product_sellinfo[0][1];
+		var productPrice = $.cookie('productPrice',Number);
+		var shipPrice = $.cookie('shipPrice',Number);
 		
-		var	currency_rate = 30;
-		var	currency = info.product_sellinfo[0][2];
-		var	ship_cost = parseInt($('#qs-shipcost').val());//twd
-		var	total_income = sell_price + shipping_price;
-		var	commission_cost = (total_income *0.2).toFixed(2);
-		var	total_cost = parseInt(info.product_cost)+ commission_cost *30 +ship_cost;//twd
+		var commissionCost = (productPrice+shipPrice)*0.2
+		var commissionCostExchanged = currencyConvert(commissionCost);
+		var totalIncome = productPrice+shipPrice;
+		var totalIncomeExchanged = currencyConvert(productPrice+shipPrice);
+		var totalCost = commissionCostExchanged +$.cookie('shipCost',Number)+$.cookie('productCost',Number);
+		var profitExchanged  = currencyConvert(totalIncome) - totalCost;
 		
+		arr = {
+			'productPriceExchanged':currencyConvert(productPrice),
+			'productPrice':productPrice+' '+$.cookie('currency'),
+			'shipPriceExchanged':currencyConvert(shipPrice),
+			'shipPrice':shipPrice+' '+$.cookie('currency'),
+			'commissionCostExchanged':commissionCostExchanged ,
+			'commissionCost':commissionCost.toFixed(2)+' '+$.cookie('currency'),
+			'profitExchanged':profitExchanged ,
+			'totalIncomeExchanged':totalIncomeExchanged,
+			'totalCost':totalCost
+		};
+		return arr;
+	}
+	
+	function updateBasicInfo(info){		
+		var label ="";
 		
-		str += '<ul class="list-group">';
+		$('#dbi-sku').html('平台 = '+$.cookie('sellPlatform'));
+		$('#dbi-product-price').html('售價 = '+info['productPriceExchanged']+' TWD ( '+info['productPrice']+' )');
+		$('#dbi-ship-price').html('收取運費 = '+info['shipPriceExchanged']+' TWD ( '+info['shipPrice']+' )');
+		$('#dbi-commission-cost').html('平台抽成 = '+Math.round(info['commissionCostExchanged'])+' TWD ( '+info['commissionCost']+' )');
+		$('#dbi-product-cost').html('成本 = '+$.cookie('productCost')+' TWD');
+		$('#dbi-ship-cost').html('實際運費 = '+$.cookie('shipCost')+' TWD');
 		
-		str += '<li class="list-group-item capitalize">平台 = '+info.sell_platform+'</li>';
-		str += '<li id="dbi-price" class="list-group-item list-group-item-success" data-display-price="'+sell_price.toFixed(2)+'" data-display-currency="'+currency+'" >售價 = '+(sell_price*currency_rate).toFixed(2)+' TWD ( '+sell_price.toFixed(2)+' '+currency+' )</li>';
-		str += '<li id="dbi-ship-price" class="list-group-item list-group-item-success" data-display-ship-price="'+shipping_price.toFixed(2)+'" data-display-currency="'+currency+'" > 收取運費 = '+(shipping_price*currency_rate).toFixed(2)+' TWD ( '+shipping_price.toFixed(2)+' '+currency+' )</li>';
-		str += '<li class="list-group-item list-group-item-danger">成本 = '+parseInt(info.product_cost)+' TWD</li>';
-		str += '<li class="list-group-item list-group-item-danger">平台抽成 = '+(commission_cost*currency_rate).toFixed(2)+' TWD ( '+commission_cost+' '+currency+' )</li>';
-		str += '<li class="list-group-item list-group-item-danger">實際運費 = '+ship_cost+' TWD</li>';
-		if((total_income*30-total_cost)<=0){msg='   <span class="label label-danger">虧損</span>';}
-		str += '<li class="list-group-item list-group-item-info">預估淨利 = '+(total_income*currency_rate-total_cost).toFixed(2)+' TWD'+msg+'</li>';
-		str += '<li class="list-group-item">總收入 = '+(total_income*currency_rate).toFixed(2)+' TWD</li>';
-		str += '<li class="list-group-item">總支出 = '+total_cost.toFixed(2)+' TWD</li>';
+		if(arr['profitExchanged']<=0){label = addLabel('label-danger','虧損')}//增加Label 來分辨是否虧損
 		
+		$('#dbi-profit').html('預估淨利 = '+Math.round(info['profitExchanged'])+' TWD	'+label);
+		$('#dbi-total-income').html('總收入 = '+Math.round(info['totalIncomeExchanged'])+' TWD');
+		$('#dbi-total-cost').html('總支出 = '+Math.round(info['totalCost'])+' TWD');
 		
+	}
+	
+	function initBasicInfo(){
+		
+		$('#display-result').html('<ul id="dbi" class="list-group"></ul>');	
+		$('#dbi').append('<li id="dbi-sku" class="list-group-item capitalize"></li>');
+		$('#dbi').append('<li id="dbi-product-price" class="list-group-item list-group-item-success" ></li>');
+		$('#dbi').append('<li id="dbi-ship-price" class="list-group-item list-group-item-success" ></li>');
+		$('#dbi').append( '<li id="dbi-product-cost" class="list-group-item list-group-item-danger"></li>');
+		$('#dbi').append('<li id="dbi-commission-cost" class="list-group-item list-group-item-danger"></li>');
+		$('#dbi').append('<li id="dbi-ship-cost" class="list-group-item list-group-item-danger"></li>');
+		$('#dbi').append('<li id="dbi-profit" class="list-group-item list-group-item-info"></li>');
+		$('#dbi').append('<li id="dbi-total-income" class="list-group-item"></li>');
+		$('#dbi').append('<li id="dbi-total-cost" class="list-group-item"></li>');	
+	}
+	
+	function tst(){
 		//Display Shipping Records
 		if	(typeof(info.shipping_record)==='undefined') {
-			str  += '<li class="list-group-item">沒有貨運紀錄</li></ul>';
+			$('#dbi').append('<li id="dbi-no-sr" class="list-group-item">沒有貨運紀錄</li>');
 		}
 		else{
-			str +='</ul>';
+			$('#dbi-no-sr').remove();
+			
 			str += '<table id="ship-record-table" class="table table-hover">';
 			
 			if($('#qs-country').val() == '999'){
@@ -121,18 +185,16 @@ $(document).ready(function(){
 			}
 			str += '</tbody></table>';
 		}
-		
-		$("#display-result").html(str);
 	}
 	
-	function  displayUpdateRow(active){
+	function  toggleArea(id,active){
 		if(typeof(active)==='undefined') {active = true;}
 		
-		if($('#update-row').is(":hidden") & active){
+		if($(id).is(":hidden") & active){
 			$("#update-row").show("slow");
 		}
 		else if(! active){
-			$("#update-row").slideUp("slow");
+			$(id).slideUp("slow");
 		}		
 	}
 	
@@ -149,6 +211,21 @@ $(document).ready(function(){
 		$('#ei-div').html("");
 	}
 	
+	function assignIAValue(){
+		//assign Quick Result form values to Save This Result form 
+		$('#ia-sku').val($.cookie('sku'));
+		$('#ia-shipcost').val($.cookie('shipCost'));
+		$('#ia-seller').val($.cookie('seller'));
+		$('#ia-country').selectpicker('val',$.cookie('countryCode') );	
+	}
+	
+	function assignLPValue(){
+		//assign Quick Result form values to Listing Price form
+		$('#lp-sell-price').val($.cookie('productPrice'));
+		$('#lp-ship-price').val($.cookie('shipPrice'));
+		$(".currency_tag").text($.cookie('currency'));
+	}
+	
 	$("#quick-result-form").on( "submit", function() {
 	
 		event.preventDefault();
@@ -162,41 +239,37 @@ $(document).ready(function(){
 
 			if(info['message']=='ERROR'){
 				$("#display-result").html('<p>'+info.code+'</p>');
-				displayUpdateRow(false);
+				toggleArea(false);
 			}
 			else{
+		
+				//set cookies
+				$.cookie('countryCode',$('#qs-country option:selected').val() );	
+				$.cookie('seller',$('#qs-seller :selected').text());
+				$.cookie('shipCost', parseInt($('#qs-shipcost').val()));//實際花費運費 (TWD)
+				setCookies(json);
+				
+				//generate BasicInfo Div
+				initBasicInfo(json);
+				updateBasicInfo(generateBasicInfoValues());
+				
+				//passing values to IA and LP form
+				assignIAValue();
+				assignLPValue();
+				
+				//showup hidden div
 				initShippingProvider( json );
-				displayBasicInfo(json);
-				
-				setQSCookies(json);
-				
-				//assign Quick Result form values to Save This Result form 
-				$('#ia-sku').val($('#qs-sku').val());
-				$('#ia-shipcost').val($('#qs-shipcost').val());
-				$('#ia-seller').val($('#qs-seller :selected').text());
-				$('#ia-country').selectpicker('val',$('#qs-country option:selected').val() );
-				
-				//assign Quick Result form values to Listing Price form
-				$('#lp-sell-price').val($("#dbi-price").data("display-price"));
-				$('#lp-ship-price').val($("#dbi-ship-price").data( "display-ship-price"));
-				$(".currency_tag").text($("#dbi-price").data("display-currency"));
-
-				
-				displayUpdateRow();
+				toggleArea('#update-row');
 			}
 		});
 	});
 	
 	$("#listing-price-form").on("submit",function() {
 		event.preventDefault();
+		$.cookie('productPrice',$('#lp-sell-price').val());
+		$.cookie('shipPrice',$('#lp-ship-price').val());
 		
-		var price = $('#lp-sell-price').val();
-		var shipping = $('#lp-shipping').val();
-		
-		
-
-		console.log(price);
-		console.log(shipping);
+		updateBasicInfo(generateBasicInfoValues());
 	});
 	
 	function showMsg(msg,type,obj){
@@ -223,7 +296,6 @@ $(document).ready(function(){
 				
 				if(info.new_record){
 				
-					//displayUpdateRow(false);//hide input area
 					showMsg('Yes you can!','alert-success',$('#display-result'));//show success msg on display area
 				}
 				else{

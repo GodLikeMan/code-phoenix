@@ -86,7 +86,7 @@
 								<span class="input-group-addon">TWD</span>	
 							</div>
 							
-							<select id="qs-seller" name="qs-seller" data-style="btn-primary"  class="selectpicker" data-width="100%">	
+							<select id="qs-seller" name="qs-seller" data-style="btn-inverse"  class="selectpicker" data-width="100%">	
 								<option disabled="disabled">Select a Seller</option>
 							<?php
 								
@@ -110,7 +110,7 @@
 							?>
 							</select>
 							
-							<select name="qs-country" id="qs-country"class="selectpicker" data-style="btn-primary" data-width="100%" data-live-search="true" data-dropup-auto="false">	
+							<select name="qs-country" id="qs-country"class="selectpicker" data-style="btn-inverse" data-width="100%" data-live-search="true" data-dropup-auto="false">	
 								<option value="999">You May Select A Country</option>
 								
 								<?php
@@ -147,6 +147,7 @@
 							<button class="btn btn-danger fullwidth" type="submit">test</button>
 						</form>
 						
+						<button id="test-db-save" class="btn btn-info fullwidth" type="button">save record to db test</button>
 					</div>
 					
 					<!--Display Area-->
@@ -194,9 +195,9 @@
 								</div>						
 								
 								<div class="input-group">
-									<span class="input-group-addon">TWD</span>
-									<input id="ia-shipcost" name="ia-shipcost" type="number" class="form-control">			
 									<span class="input-group-addon">shipping cost</span>
+									<input id="ia-shipcost" name="ia-shipcost" type="number" value="0"  min="0"  class="form-control">			
+									<span class="input-group-addon">TWD</span>	
 								</div>
 								
 								<button id="ia-submit" class="btn btn-danger fullwidth" type="submit">Save and Update</button>
@@ -245,9 +246,9 @@
 					
 					<div class="col-md-8">
 						<h1><i class="fa fa-wrench  fa-fw"></i> Modify</h1>
-						<ul class="nav nav-pills" role="tablist" id="search-area">
+						<ul class="nav nav-pills nav-justified" role="tablist" id="search-area">
 						
-							<li class="active"><a href="#sr-tab" role="tab" data-toggle="tab">Shipping Records</a></li>
+							<li class="active"><a href="#sr-tab" role="tab" data-toggle="tab"><i class="fa fa-cubes"></i> Shipping Records</a></li>
 							<li><a href="#home" role="tab" data-toggle="tab">Seller Accounts</a></li>
 							<li><a href="#profile" role="tab" data-toggle="tab">Shipping Providers</a></li>
 							<li><a href="#messages" role="tab" data-toggle="tab">Package Types</a></li>

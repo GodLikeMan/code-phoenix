@@ -7,7 +7,7 @@ use ampro;
 
 INSERT INTO product(sku,cost)
 VALUES
-('test1',5566),('test2',56),('grax',2000),('graw',2200);
+('test1',5566),('test2',56),('grax',2000),('graw',2200),('fle2',4000);
 
 
 INSERT INTO seller(name,sell_platform)
@@ -22,7 +22,10 @@ VALUES
 ('test1',2,86.86,25),
 ('test2',1,666,40.55),
 ('grax',2,94.99,24),
-('graw',2,99.99,24);
+('graw',2,99.99,24),
+('grax',1,94.99,24),
+('graw',1,99.99,24),
+('fle2',1,210,90);
 
 INSERT INTO package_volume(sku,p_type,p_length,p_width,p_height,p_weight)
 VALUES

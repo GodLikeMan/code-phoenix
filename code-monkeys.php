@@ -11,12 +11,12 @@
 		}
 		
 		public function getProductCost(){
-			$query = 'SELECT cost FROM product WHERE sku="'.$_POST['qs-sku'].'"'; 
+			$query = 'SELECT cost,sku FROM product WHERE sku="'.$_POST['qs-sku'].'"'; 
 			$this->searchDB($query,'product_cost','This Sku not found on DB');		
 		}
 		
 		public	function getProductSellinfo(){
-			$query = 'SELECT price,s_price,currency FROM product_sellinfo WHERE sku="'.$_POST['qs-sku'].'" AND seller_id="'.$_POST['qs-seller'].'"';
+			$query = 'SELECT price,s_price,currency,seller_id FROM product_sellinfo WHERE sku="'.$_POST['qs-sku'].'" AND seller_id="'.$_POST['qs-seller'].'"';
 			$this->searchDB($query,'product_sellinfo','Product Price Error');	
 		}
 		
@@ -66,7 +66,7 @@
 		}
 		
 		public function getTagsBySKU($sku){
-			$query = "SELECT tag FROM";
+			$query = "SELECT tag FROM tag_product_map";
 			//$this->searchDB($query,'shipping_record',false);
 		}
 		
@@ -99,10 +99,11 @@
 		
 		public function monkeyWorks(){
 			if($this->works==='qs'){
-				$this->getShippingProvider();
 				$this->getProductCost();
 				$this->getProductSellinfo();
 				$this->getSellPlatform();
+				
+				$this->getShippingProvider();
 				$this->getShippingRecordInfo($_POST['qs-country']);
 			}
 			else if ($this->works==='ia'){
