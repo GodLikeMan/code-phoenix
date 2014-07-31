@@ -11,12 +11,12 @@
 		}
 		
 		public function getProductCost(){
-			$query = 'SELECT cost FROM product WHERE sku="'.$_POST['qs-sku'].'"'; 
+			$query = 'SELECT cost,sku FROM product WHERE sku="'.$_POST['qs-sku'].'"'; 
 			$this->searchDB($query,'product_cost','This Sku not found on DB');		
 		}
 		
 		public	function getProductSellinfo(){
-			$query = 'SELECT price,s_price,currency FROM product_sellinfo WHERE sku="'.$_POST['qs-sku'].'" AND seller_id="'.$_POST['qs-seller'].'"';
+			$query = 'SELECT price,s_price,currency,seller_id FROM product_sellinfo WHERE sku="'.$_POST['qs-sku'].'" AND seller_id="'.$_POST['qs-seller'].'"';
 			$this->searchDB($query,'product_sellinfo','Product Price Error');	
 		}
 		
@@ -26,25 +26,31 @@
 		}
 	
 		public function	getShippingProvider(){
-			$query = 'SELECT id,name FROM shipping_provider'; 
+			$query = 'SELECT id,name FROM tag WHERE category="shipping provider"'; 
 			$this->searchDB($query,'shipping_provider','Shipping Provider Error');	
 		}
 		
 		public	function getPackageType(){
-			$query = 'SELECT id,name FROM package_type WHERE sp_id = 0 OR sp_id="'.$_POST['ia-shipmethod'].'"';
+		
+			$query = 'SELECT id,name FROM tag WHERE category="common package type" OR (category="package type" AND name LIKE "'.$_POST["shipping_provider"].'%")'; 
 			$this->searchDB($query,'package_type','Package Type Error');
+			
 		}
 		
 		public function getShippingRecordInfo($country){
 			
 			if($country === '999' ){
-				$query = 'SELECT cl.name,avg(sr.s_cost)  FROM shipping_record AS sr,country_list AS cl WHERE  sku="'.$_POST['qs-sku'].'" AND sr.country_code = cl.iso_numeric GROUP BY cl.name ';			
+				$query 	= 'SELECT cl.name,avg(sr.s_cost)  FROM shipping_record AS sr,country_list AS cl WHERE  sku="'.$_POST["qs-sku"].'" AND sr.country_code = cl.iso_numeric GROUP BY cl.name ';	
 			}
 			else{
-				$query = 'SELECT cl.name,sr.s_cost,sr.date_modified  FROM shipping_record AS sr,country_list AS cl WHERE (sku="'.$_POST['qs-sku'].'" AND sr.country_code  = "'.$country.'") AND sr.country_code = cl.iso_numeric ORDER BY sr.date_modified LIMIT 5 ';
-			}	
+				$query = 'SELECT sr.id,cl.name,sr.s_cost FROM shipping_record AS sr,country_list AS cl WHERE (sku="'.$_POST['qs-sku'].'" AND sr.country_code  = "'.$country.'") AND sr.country_code = cl.iso_numeric ORDER BY sr.date_modified LIMIT 5 ';
+			}			
+			$this->searchDB($query,'shipping_record',false);			
+		}
 		
-			$this->searchDB($query,'shipping_record',false);
+		public function getShippingRecordTag($sr_id){
+			$query	= 'SELECT tsr.sr_id,t.name,t.category FROM tag as t ,tag_sr_map as tsr WHERE t.id = tsr.t_id AND tsr.sr_id = '.$sr_id;	
+			$this->searchDB($query,'sr_tag',false);			
 		}
 		
 		public function insertShippingRecordInfo(){
@@ -57,6 +63,11 @@
 
 			}		
 			mysqli_close($link);	
+		}
+		
+		public function getTagsBySKU($sku){
+			$query = "SELECT tag FROM tag_product_map";
+			//$this->searchDB($query,'shipping_record',false);
 		}
 		
 		public function getDBLink(){
@@ -88,10 +99,11 @@
 		
 		public function monkeyWorks(){
 			if($this->works==='qs'){
-				$this->getShippingProvider();
 				$this->getProductCost();
 				$this->getProductSellinfo();
 				$this->getSellPlatform();
+				
+				$this->getShippingProvider();
 				$this->getShippingRecordInfo($_POST['qs-country']);
 			}
 			else if ($this->works==='ia'){
@@ -99,6 +111,12 @@
 			}
 			else if ($this->works==='package_type'){
 				$this->getPackageType();
+			}
+			else if($this->works==='tag_search'){
+				$this->getTagsBySKU($_POST['tag-search']);
+			}
+			else if($this->works === 'sr_tag'){
+				$this->getShippingRecordTag($_POST['sr_id']);
 			}
 			else{echo json_encode(array('message' => 'ERROR', 'code' => $_POST['query']));	}
 			
