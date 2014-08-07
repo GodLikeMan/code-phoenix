@@ -10,18 +10,18 @@
 			$this->data = $post_data;
 		}
 		
-		public function getProductCost(){
-			$query = 'SELECT cost,sku FROM product WHERE sku="'.$_POST['qs-sku'].'"'; 
+		public function getProductCost($sku){
+			$query = 'SELECT cost,sku FROM product WHERE sku="'.$sku.'"'; 
 			$this->searchDB($query,'product_cost','This Sku not found on DB');		
 		}
 		
-		public	function getProductSellinfo(){
-			$query = 'SELECT price,s_price,currency,seller_id FROM product_sellinfo WHERE sku="'.$_POST['qs-sku'].'" AND seller_id="'.$_POST['qs-seller'].'"';
+		public function getProductSellinfo($sku,$sellerId){
+			$query = 'SELECT price,s_price,currency,seller_id FROM product_sellinfo WHERE sku="'.$sku.'" AND seller_id="'.$sellerId.'"';
 			$this->searchDB($query,'product_sellinfo','Product Price Error');	
 		}
 		
-		public function	getSellPlatform(){
-			$query = 'SELECT sell_platform FROM seller WHERE id ="'.$_POST['qs-seller'].'"'; 
+		public function	getSellPlatform($sellerId){
+			$query = 'SELECT sell_platform FROM seller WHERE id ="'.$sellerId.'"'; 
 			$this->searchDB($query,'sell_platform','Sell Platform Error ');
 		}
 	
@@ -37,32 +37,25 @@
 			
 		}
 		
-		public function getShippingRecordInfo($country){
+		public function getShipRecord($sku,$country){
 			
 			if($country === '999' ){
-				$query 	= 'SELECT cl.name,avg(sr.s_cost)  FROM shipping_record AS sr,country_list AS cl WHERE  sku="'.$_POST["qs-sku"].'" AND sr.country_code = cl.iso_numeric GROUP BY cl.name ';	
+				$query 	= 'SELECT cl.name,avg(sr.s_cost)  FROM shipping_record AS sr,country_list AS cl WHERE  sku="'.$sku.'" AND sr.country_code = cl.iso_numeric GROUP BY cl.name ';	
 			}
 			else{
-				$query = 'SELECT sr.id,cl.name,sr.s_cost FROM shipping_record AS sr,country_list AS cl WHERE (sku="'.$_POST['qs-sku'].'" AND sr.country_code  = "'.$country.'") AND sr.country_code = cl.iso_numeric ORDER BY sr.date_modified LIMIT 5 ';
+				$query = 'SELECT sr.id,cl.name,sr.s_cost FROM shipping_record AS sr,country_list AS cl WHERE (sku="'.$sku.'" AND sr.country_code  = "'.$country.'") AND sr.country_code = cl.iso_numeric ORDER BY sr.date_modified LIMIT 5 ';
 			}			
 			$this->searchDB($query,'shipping_record',false);			
 		}
 		
-		public function getShippingRecordTag($sr_id){
+		public function getShipRecordTag($sr_id){
 			$query	= 'SELECT tsr.sr_id,t.name,t.category FROM tag as t ,tag_sr_map as tsr WHERE t.id = tsr.t_id AND tsr.sr_id = '.$sr_id;	
 			$this->searchDB($query,'sr_tag',false);			
 		}
 		
-		public function insertShippingRecordInfo(){
-			$query = 'INSERT INTO shipping_record (sku,country_code,s_cost,s_provider) VALUES ("'.$_POST['ia-sku'].'","'.$_POST['ia-country'].'","'.$_POST['ia-shipcost'].'","'.$_POST['ia-shipmethod'].'" )';
-			$link = $this->getDBLink();
-			
-			if($result = mysqli_query($link, $query)){
-	
-				$this->info['new_record']  =  $result;
-
-			}		
-			mysqli_close($link);	
+		public function saveShipRecord($sku,$countryCode,$shipCost){
+			$query = 'INSERT INTO shipping_record (sku,country_code,s_cost) VALUES ("'.$sku.'","'.$countryCode.'","'.$shipCost.'")';
+			$this->saveToDB($query,'save_ship_record',' Save Ship Record Error');	
 		}
 		
 		public function getTagsBySKU($sku){
@@ -70,11 +63,33 @@
 			//$this->searchDB($query,'shipping_record',false);
 		}
 		
+		public function savePriceRecord($sku,$sellerId,$productPrice,$shipPrice,$currency){
+			$query	= 'INSERT INTO product_price_record (sku,seller_id,price,s_price,currency) VALUES ("'.$sku.'","'.$sellerId.'","'.$productPrice.'","'.$shipPrice.'","'.$currency.'")';	
+			$this->saveToDB($query,'save_price_record','Listing Price Save Error');			
+		}
+		
+		
+		public function updateSellInfo($productPrice,$shipPrice,$sku,$sellerId){
+			$query	= 'UPDATE product_sellinfo SET price='.$productPrice.',s_price='.$shipPrice.' WHERE sku="'.$sku.'" and seller_id='.$sellerId;		
+			$this->saveToDB($query,'update_sell_info','Update Sell Info Error');				
+		}
+		
 		public function getDBLink(){
 			$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
 			if (mysqli_connect_errno()){ die( json_encode(array('message' => 'ERROR', 'code' => 'DB connect lost! 。゜゜(´□｀。)°゜。')));	}
 			mysqli_set_charset ($link ,"utf8");	
 			return $link;
+		}
+		
+		public function saveToDB($query,$array_key,$error_msg){
+			$link = $this->getDBLink();
+			
+			if($result = mysqli_query($link, $query)){
+				$this->info[$array_key]  = 'success';
+			}
+			else{  if($error_msg!=false) die( json_encode(array('message' => 'ERROR', 'code' => '◢▆▅崩▄▃▂╰(〒皿〒)╯▂▃▄潰▅▇◣')));	}
+			
+			mysqli_close($link);	
 		}
 		
 		public function searchDB($query,$array_key,$error_msg){
@@ -99,15 +114,20 @@
 		
 		public function monkeyWorks(){
 			if($this->works==='qs'){
-				$this->getProductCost();
-				$this->getProductSellinfo();
-				$this->getSellPlatform();
-				
+				$this->getProductCost($_POST['sku']);
+				$this->getProductSellinfo($_POST['sku'],$_POST['sellerId']);
+				$this->getSellPlatform($_POST['sellerId']);
 				$this->getShippingProvider();
-				$this->getShippingRecordInfo($_POST['qs-country']);
 			}
-			else if ($this->works==='ia'){
-				$this->insertShippingRecordInfo();
+			else if ($this->works==='save_price_record') {
+				$this->savePriceRecord($_POST['sku'],$_POST['sellerId'],$_POST['productPrice'],$_POST['shipPrice'],$_POST['currency']);
+				$this->updateSellInfo($_POST['productPrice'],$_POST['shipPrice'],$_POST['sku'],$_POST['sellerId']);
+			}
+			else if ($this->works==='save_ship_record') {
+				$this->saveShipRecord($_POST['sku'],$_POST['countryCode'],$_POST['shipCost']);
+			}
+			else if ($this->works==='get_sr'){ 
+				$this->getShipRecord($_POST['sku'],$_POST['countryCode']);
 			}
 			else if ($this->works==='package_type'){
 				$this->getPackageType();
@@ -116,7 +136,7 @@
 				$this->getTagsBySKU($_POST['tag-search']);
 			}
 			else if($this->works === 'sr_tag'){
-				$this->getShippingRecordTag($_POST['sr_id']);
+				$this->getShipRecordTag($_POST['sr_id']);
 			}
 			else{echo json_encode(array('message' => 'ERROR', 'code' => $_POST['query']));	}
 			

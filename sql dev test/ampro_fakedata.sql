@@ -1,13 +1,13 @@
+SET NAMES UTF8;
+USE ampro;
 /*
 *	Fake date input
 *	for test only
 */
 
-use ampro;
-
 INSERT INTO product(sku,cost)
 VALUES
-('test1',5566),('test2',56),('grax',2000),('graw',2200),('fle2',4000);
+('test1',5566),('test2',56),('grax',2000),('graw',2200),('fle2',4000),('flf6',4300),('xcac',400);
 
 
 INSERT INTO seller(name,sell_platform)
@@ -25,7 +25,9 @@ VALUES
 ('graw',2,99.99,24),
 ('grax',1,94.99,24),
 ('graw',1,99.99,24),
-('fle2',1,210,90);
+('fle2',1,210,90),
+('flf6',1,369.95,0),
+('xcac',1,29.49,0);
 
 INSERT INTO package_volume(sku,p_type,p_length,p_width,p_height,p_weight)
 VALUES

@@ -1,3 +1,4 @@
+SET NAMES UTF8;
 CREATE DATABASE IF NOT EXISTS ampro CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE ampro;
 
@@ -16,7 +17,7 @@ USE ampro;
 */
 CREATE TABLE IF NOT EXISTS `product`
 (
-	`sku` VARCHAR(8),
+	`sku` VARCHAR(15),
 	`name` VARCHAR(80),
 	`cost` SMALLINT UNSIGNED,
 	`date_created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -40,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `product`
 */
 CREATE TABLE IF NOT EXISTS `product_sellinfo`
 (
-	`sku` VARCHAR(8),
+	`sku` VARCHAR(15),
 	`seller_id` TINYINT UNSIGNED,
 	`price` DECIMAL(6,2) NOT NULL DEFAULT 0,
 	`s_price`	DECIMAL(5,2) NOT NULL DEFAULT 0,
@@ -51,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `product_sellinfo`
 
 
 /*
-*	名稱					:	product_modify_record
+*	名稱					:	product_price_record
 *	功能					:	產品修改紀錄
 *
 *	PRIMARY KEY  = id
@@ -63,15 +64,15 @@ CREATE TABLE IF NOT EXISTS `product_sellinfo`
 *	currency			:	價格幣別
 *	date_created	:	輸入資料庫日期	
 */
-CREATE TABLE IF NOT EXISTS `product_modify_record`
+CREATE TABLE IF NOT EXISTS `product_price_record`
 (
 	`id` INT AUTO_INCREMENT,
-	`sku` VARCHAR(8),
+	`sku` VARCHAR(15),
 	`seller_id` TINYINT UNSIGNED,
 	`price` DECIMAL(6,2) NOT NULL DEFAULT 0,
 	`s_price`	DECIMAL(5,2) NOT NULL DEFAULT 0,
 	`currency` CHAR(3) NOT NULL DEFAULT 'USD',
-	`date_created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	`date_created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (`id`)
 	
 )ENGINE InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -94,7 +95,7 @@ CREATE TABLE IF NOT EXISTS `shipping_record`
 (
 	`id` INT AUTO_INCREMENT,
 	`pv_id` INT UNSIGNED DEFAULT 0,
-	`sku` VARCHAR(8) NOT NULL,
+	`sku` VARCHAR(15) NOT NULL,
 	`country_code` CHAR(3) NOT NULL,
 	`s_cost` SMALLINT UNSIGNED NOT NULL DEFAULT 0 ,
 	`date_created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -120,7 +121,7 @@ CREATE TABLE IF NOT EXISTS `shipping_record`
 CREATE TABLE IF NOT EXISTS `package_volume` 
 (
 	`id` INT AUTO_INCREMENT,
-	`sku` VARCHAR(8),
+	`sku` VARCHAR(15),
 	`p_type` TINYINT NOT NULL,
 	`p_length` TINYINT UNSIGNED NOT NULL,
 	`p_width` TINYINT UNSIGNED NOT NULL,
@@ -196,7 +197,7 @@ CREATE TABLE IF NOT EXISTS `tag` (
 CREATE TABLE IF NOT EXISTS `tag_product_map` (
 	`id` INT AUTO_INCREMENT,
 	`t_id` INT UNSIGNED NOT NULL,
-	`sku` VARCHAR(8) NOT NULL,
+	`sku` VARCHAR(15) NOT NULL,
 	PRIMARY KEY (`id`)
 	
 ) ENGINE InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci ;

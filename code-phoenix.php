@@ -126,8 +126,8 @@
 								?>
 							
 							</select>			
-							
-							<button class="btn btn-danger fullwidth" type="submit">Go!</button>
+							<button class="btn btn-danger fullwidth" type="submit">試算</button>
+							<button id="qs-save" class="btn btn-info fullwidth" type="button" style="display: none;" disabled >儲存實際運費和國家</button>
 						</form>
 						
 						<hr>
@@ -144,10 +144,9 @@
 								<input id="lp-ship-price" name="lp-ship-price" type="number" step="0.01" min="0" class="form-control" >
 								<span class="input-group-addon currency_tag">[currency]</span>	
 							</div>
-							<button class="btn btn-danger fullwidth" type="submit">test</button>
+							<button id="lp-calc" class="btn btn-danger fullwidth" type="submit">試算</button>
+							<button id="lp-save" class="btn btn-info fullwidth" type="button" style="display: none;" disabled>儲存價格</button>
 						</form>
-						
-						<button id="test-db-save" class="btn btn-info fullwidth" type="button">save record to db test</button>
 					</div>
 					
 					<!--Display Area-->
@@ -159,7 +158,7 @@
 							</div>
 						</div>
 					</div>
-
+					
 				</div>
 				
 				<!--  Update This Result to DB-->
@@ -304,7 +303,3 @@
 		</div>
 	</body>
 </html>
-
-<?php
-	
-?>

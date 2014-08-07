@@ -6,27 +6,12 @@ $(document).ready(function(){
 		$(this).tab('show');
 	});
 	
-	//Test for product save
-	$('#test-db-save').on('click',function(){
-	
-		$.post("code-monkeys.php",$(this).serialize()+'&query=update-',function(json){
-		
-			var	info = $.parseJSON(json);
 
-			if(info['message']=='ERROR'){
-				$("#display-result").html('<p>'+info.code+'</p>');
-			}
-			else{
-	
-			}
-		});		
-	});
-	
 	function initShippingProvider(json){
 		var	info = $.parseJSON(json);
 		var	str ='';
 		
-		for(var i=0;i<info.shipping_provider.length;i++){
+		for(var i=0;i<info.shipping_provider.length;i++) {
 		
 			str += '<option value="'+info.shipping_provider[i][0]+'">'+info.shipping_provider[i][1]+'</option>';
 		}
@@ -67,8 +52,6 @@ $(document).ready(function(){
 		var	info = $.parseJSON(json);
 		
 		
-		$.cookie('sku',info.product_cost[0][1]);
-		$.cookie('sellerId',info.product_sellinfo[0][3]);
 		$.cookie('sellPlatform',info.sell_platform);
 		$.cookie('productPrice', info.product_sellinfo[0][0].toFixed(2));//售價	
 		$.cookie('shipPrice', info.product_sellinfo[0][1].toFixed(2));//收取運費
@@ -78,7 +61,7 @@ $(document).ready(function(){
 		$.cookie('commissionCost',($.cookie('totalIncome',Number)*0.2).toFixed(2));//被抽成金額
 		$.cookie('productCost',info.product_cost[0][0]);
 		$.cookie('totalCost',parseInt(info.product_cost)+currencyConvert($.cookie('commissionCost',Number))+$.cookie('shipCost',Number));//產品成本+被抽成金額*匯率+實際花費運費 (TWD)
-		console.log($.cookie());
+
 	}
 
 	
@@ -112,8 +95,8 @@ $(document).ready(function(){
 		var label ="";
 		
 		$('#dbi-sku').html('平台 = '+$.cookie('sellPlatform'));
-		$('#dbi-product-price').html('售價 = '+info['productPriceExchanged']+' TWD ( '+info['productPrice']+' )');
-		$('#dbi-ship-price').html('收取運費 = '+info['shipPriceExchanged']+' TWD ( '+info['shipPrice']+' )');
+		$('#dbi-product-price').html('售價 = '+Math.round(info['productPriceExchanged'])+' TWD ( '+info['productPrice']+' )');
+		$('#dbi-ship-price').html('收取運費 = '+Math.round(info['shipPriceExchanged'])+' TWD ( '+info['shipPrice']+' )');
 		$('#dbi-commission-cost').html('平台抽成 = '+Math.round(info['commissionCostExchanged'])+' TWD ( '+info['commissionCost']+' )');
 		$('#dbi-product-cost').html('成本 = '+$.cookie('productCost')+' TWD');
 		$('#dbi-ship-cost').html('實際運費 = '+$.cookie('shipCost')+' TWD');
@@ -138,17 +121,47 @@ $(document).ready(function(){
 		$('#dbi').append('<li id="dbi-profit" class="list-group-item list-group-item-info"></li>');
 		$('#dbi').append('<li id="dbi-total-income" class="list-group-item"></li>');
 		$('#dbi').append('<li id="dbi-total-cost" class="list-group-item"></li>');	
+		
+		//extra info 
+		$('#display-result').append('<ul class="nav nav-pills nav-justified" role="tablist" id="display-result-extra"></ul>');
+		$('#display-result-extra').append('<li class="active"><a href="#dbi-shipping-record-tab" role="tab" data-toggle="tab"><i class="fa fa-fw fa-cubes"></i> Shipping Records</a></li>');
+		$('#display-result-extra').append('<li><a href="#dbi-price-history-tab" role="tab" data-toggle="tab"><i class="fa fa-fw fa-paw"></i> Price History</a></li>');
+		
+		$('#display-result').append('<div class="tab-content" id="display-result-extra-content"></div>');
+		$('#display-result-extra-content').append('<div class="tab-pane active" id="dbi-shipping-record-tab">********</div>');
+		$('#display-result-extra-content').append('<div class="tab-pane" id="dbi-price-history-tab">...</div>');
+		
+		updateBasicInfoShippingRecords();
 	}
 	
-	function tst(){
+
+	
+	function updateBasicInfoShippingRecords(){
 		//Display Shipping Records
+		
+		$.post("code-monkeys.php",{'countryCode':$.cookie('countryCode'),'sku':$.cookie('sku'),'query':'get_sr'},function(json){	
+			
+			/*
+			var	info = $.parseJSON(json);
+			if	(typeof(info.shipping_record)==='undefined') {
+				$('#dbi').append('<li id="dbi-no-sr" class="list-group-item">沒有貨運紀錄</li>');
+			}
+			else{
+				$('#dbi-shipping-record-tab').append( '<table id="ship-record-table" class="table table-hover"><table>');
+				$('#ship-record-table').append('<thead><tr><th>國家</th><th>平均實際運費 (TWD)</th></tr></thead><tbody></tbody>');
+			}
+			*/
+		});		
+		/*
 		if	(typeof(info.shipping_record)==='undefined') {
 			$('#dbi').append('<li id="dbi-no-sr" class="list-group-item">沒有貨運紀錄</li>');
 		}
 		else{
 			$('#dbi-no-sr').remove();
 			
-			str += '<table id="ship-record-table" class="table table-hover">';
+			$('#dbi-shipping-record-tab').append( '<table id="ship-record-table" class="table table-hover"><table>');
+			$('#ship-record-table').append('<thead><tr><th>國家</th><th>平均實際運費 (TWD)</th></tr></thead><tbody></tbody>');
+			
 			
 			if($('#qs-country').val() == '999'){
 					
@@ -184,7 +197,7 @@ $(document).ready(function(){
 				}				
 			}
 			str += '</tbody></table>';
-		}
+		}*/
 	}
 	
 	function  toggleArea(id,active){
@@ -226,13 +239,49 @@ $(document).ready(function(){
 		$(".currency_tag").text($.cookie('currency'));
 	}
 	
+	$('#qs-save').on("click",function() {
+	
+		//disable button for anti-spam
+		$('#qs-save').prop('disabled', true).slideToggle();
+		
+				
+		//validate inpu data
+		
+		//popup hint for saving what data
+		
+		//save to cookie
+		$.cookie('productPrice',$('#lp-sell-price').val() );//售價	
+		$.cookie('shipPrice', $('#lp-ship-price').val());//收取運費
+		
+		//save data to database 
+		$.post("code-monkeys.php",{'sku':$.cookie('sku'),'countryCode':$.cookie('countryCode'),'shipCost':$.cookie('shipCost'),'query':'save_ship_record'},function(json){
+		
+			var	info = $.parseJSON(json);
+
+			if(info['message']=='ERROR'){
+				$("#display-result").html('<p>'+info.code+'</p>');
+			}
+			else{
+				//show success msg!
+				console.log(info);
+			}	
+		});		
+	});
+	
 	$("#quick-result-form").on( "submit", function() {
 	
 		event.preventDefault();
 		
 		cleanExtraInfo();
 		
-		$.post("code-monkeys.php",$(this).serialize()+'&query=qs',function(json){
+		//set cookies from form
+		$.cookie('sku',$('#qs-sku').val() );	
+		$.cookie('countryCode',$('#qs-country option:selected').val() );	
+		$.cookie('sellerId',$('#qs-seller :selected').val());
+		$.cookie('shipCost', parseInt($('#qs-shipcost').val()));//實際花費運費 (TWD)
+		
+		
+		$.post("code-monkeys.php",{'sellerId':$.cookie('sellerId'),'sku':$.cookie('sku'),'query':'qs'},function(json){
 			
 			//console.log(json);//show response
 			var	info = $.parseJSON(json);
@@ -242,15 +291,12 @@ $(document).ready(function(){
 				toggleArea(false);
 			}
 			else{
-		
+			
 				//set cookies
-				$.cookie('countryCode',$('#qs-country option:selected').val() );	
-				$.cookie('seller',$('#qs-seller :selected').text());
-				$.cookie('shipCost', parseInt($('#qs-shipcost').val()));//實際花費運費 (TWD)
 				setCookies(json);
 				
 				//generate BasicInfo Div
-				initBasicInfo(json);
+				initBasicInfo();
 				updateBasicInfo(generateBasicInfoValues());
 				
 				//passing values to IA and LP form
@@ -260,16 +306,51 @@ $(document).ready(function(){
 				//showup hidden div
 				initShippingProvider( json );
 				toggleArea('#update-row');
+				
+				$('#qs-save').prop('disabled', false).slideToggle();
 			}
 		});
 	});
 	
+	
 	$("#listing-price-form").on("submit",function() {
 		event.preventDefault();
+		
 		$.cookie('productPrice',$('#lp-sell-price').val());
 		$.cookie('shipPrice',$('#lp-ship-price').val());
 		
 		updateBasicInfo(generateBasicInfoValues());
+		
+		$('#lp-save').prop('disabled', false).slideToggle();
+	});
+	
+	//Test for product save
+	$('#lp-save').on('click',function(){
+	
+		//disable button for anti-spam
+		$('#lp-save').prop('disabled', true).slideToggle();
+				
+		//validate inpu data
+		
+		//save to cookie
+		$.cookie('productPrice',$('#lp-sell-price').val() );//售價	
+		$.cookie('shipPrice', $('#lp-ship-price').val());//收取運費
+		
+		//save data to database 
+		$.post("code-monkeys.php",{'sku':$.cookie('sku'),'sellerId':$.cookie('sellerId'),'productPrice':$.cookie('productPrice'),'shipPrice':$.cookie('shipPrice'),'currency':$.cookie('currency'),'query':'save_price_record'},function(json){
+		
+			var	info = $.parseJSON(json);
+
+			if(info['message']=='ERROR'){
+				$("#display-result").html('<p>'+info.code+'</p>');
+			}
+			else{
+				//show success msg!
+				console.log(info);
+			}	
+		});
+	
+		
 	});
 	
 	function showMsg(msg,type,obj){
@@ -326,7 +407,7 @@ $(document).ready(function(){
 		event.preventDefault();
 			
 		$.post("code-monkeys.php",$(this).serialize()+'&query=tag_search',function(json){
-				console.log(json);
+				//console.log(json);
 				
 				var	info = $.parseJSON(json);//parser json for check operate success or failed
 				
