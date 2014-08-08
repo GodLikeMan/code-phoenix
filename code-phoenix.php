@@ -8,12 +8,16 @@
 		<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 		<link href="http://fonts.googleapis.com/css?family=Roboto+Condensed:400italic,700italic,400,700|Oswald:400,700" rel="stylesheet">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.5.4/bootstrap-select.min.css" rel="stylesheet">
+		<link href="//cdn.datatables.net/1.10.2/css/jquery.dataTables.css" rel="stylesheet">
+		<link href="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
 		<link href="code-phoenix.css" rel="stylesheet">
 		
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.5.4/bootstrap-select.min.js"></script>
 		<script src="lib/jquery.cookie-1.4.1.min.js"></script>
+		<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+		<script src="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.js"></script>
 		<script src="code-phoenix.js"></script>
 	
 	</head>
@@ -71,7 +75,7 @@
 			
 				<div class="row">
 					<!-- input Sku -->
-					<div class="col-md-4">
+					<div class="col-md-3">
 						
 						
 						<form class="form-horizontal" id="quick-result-form" role="form" >
@@ -150,7 +154,7 @@
 					</div>
 					
 					<!--Display Area-->
-					<div class="col-md-8">
+					<div class="col-md-9">
 						<h1><i class="fa fa-database fa-fw"></i> Display Info</h1>
 						<div class='panel panel-primary'>
 							<div  id="display-result" class='panel-body'>
@@ -162,7 +166,7 @@
 				</div>
 				
 				<!--  Update This Result to DB-->
-				<div id="update-row" class="row">
+				<div id="update-row" class="row" >
 					<div class="col-md-6">
 						<div id="ia-div">
 							
@@ -216,6 +220,79 @@
 				
 				<!-- Future Plan -->
 				<div class="row">
+					<div class="col-md-12">
+						<h1><i class="fa fa-wrench  fa-fw"></i> Modify</h1>
+						<ul class="nav nav-pills nav-justified" role="tablist" id="search-area">
+						
+							<li class="active"><a href="#cost-tab" role="tab" data-toggle="tab"><i class="fa fa-cubes"></i> Shipping Records</a></li>
+							<li><a href="#product-cost-tab" role="tab" data-toggle="tab">Product Cost</a></li>
+							<li><a href="#profile" role="tab" data-toggle="tab">Shipping Providers</a></li>
+							<li><a href="#messages" role="tab" data-toggle="tab">Package Types</a></li>
+							<li><a href="#settings" role="tab" data-toggle="tab">Settings</a></li>
+						</ul>
+
+						<div class="tab-content">
+							<div class="tab-pane active" id="cost-tab">
+							
+								<?php
+									//generate  shipping record table
+									echo('<table id="mod-cost-table" class="table table-hover datagrid">');
+									
+									$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
+									mysqli_set_charset ($link ,"utf8");
+									$query = 'SELECT sr.id, sr.sku, cl.name, sr.s_cost,  sr.date_modified FROM shipping_record as sr,country_list as cl WHERE sr.country_code =cl.iso_numeric '; 
+									$result = mysqli_query($link, $query); 
+									echo '<thead><tr><td>***</td><td>***</td><td>***</td><td>***</td><td>***</td></tr></thead><tbody>';
+									while($row = mysqli_fetch_array($result)) { 
+										echo('<tr><td>'.$row[0].'</td><td>'.$row[1].'</td><td>'.$row[2].'</td><td>'.$row[3].'</td><td>'.$row[4].'</td></tr>');	
+									}
+									echo("</tbody></table>");
+								?>
+								
+								
+							</div>
+							<div class="tab-pane" id="product-cost-tab">
+								<?php
+									//generate  product cost table
+									echo('<table id="product-cost-table" class="table table-hover datagrid">');
+									
+									$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
+									mysqli_set_charset ($link ,"utf8");
+									$query = 'SELECT * FROM product'; 
+									$result = mysqli_query($link, $query); 
+									echo '<thead><tr><td>Sku</td><td>Short Description</td><td>Cost</td><td>Created Date</td></tr></thead><tbody>';
+									while($row = mysqli_fetch_array($result)) { 
+										echo('<tr><td>'.$row[0].'</td><td>'.$row[1].'</td><td>'.$row[2].'</td><td>'.$row[3].'</td></tr>');	
+									}
+									echo("</tbody></table>");				
+								?>
+							</div>
+							<div class="tab-pane" id="profile">...</div>
+							<div class="tab-pane" id="messages">...</div>
+							<div class="tab-pane" id="settings">...</div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Tag System Dev Area -->
+				<div class="row">
+					<div class="col-md-6">
+						<div >
+							<form class="form-horizontal" id="tag-operate-form" role="form" >
+								<h1><i class="fa fa-bug"></i> Tag System Develop</h1>
+								<div class="input-group">
+									<span class="input-group-addon">SKU</span>	
+									<input id="tag-search" name="tag-search" class="form-control">
+								</div>	
+								
+								<button id="tag-submit" class="btn btn-danger fullwidth" type="submit">Here We Go ~</button>
+								
+							</form>
+						</div>
+					</div>
+				</div>
+				
+				<div class="row">
 					<div class="col-md-4">
 						<h1><span class="glyphicon glyphicon-th-list"></span> Statistic</h1>
 						
@@ -240,61 +317,6 @@
 							<div class="panel-body">
 
 							</div>
-						</div>
-					</div>
-					
-					<div class="col-md-8">
-						<h1><i class="fa fa-wrench  fa-fw"></i> Modify</h1>
-						<ul class="nav nav-pills nav-justified" role="tablist" id="search-area">
-						
-							<li class="active"><a href="#sr-tab" role="tab" data-toggle="tab"><i class="fa fa-cubes"></i> Shipping Records</a></li>
-							<li><a href="#home" role="tab" data-toggle="tab">Seller Accounts</a></li>
-							<li><a href="#profile" role="tab" data-toggle="tab">Shipping Providers</a></li>
-							<li><a href="#messages" role="tab" data-toggle="tab">Package Types</a></li>
-							<li><a href="#settings" role="tab" data-toggle="tab">Settings</a></li>
-						</ul>
-
-						<div class="tab-content">
-							<div class="tab-pane active" id="sr-tab">
-							
-								<?php
-									//generate  shipping record table
-									echo('<table class="table table-hover">');
-									
-									$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
-									mysqli_set_charset ($link ,"utf8");
-									$query = 'SELECT sr.id, sr.sku, cl.name, sr.s_cost,  sr.date_modified FROM shipping_record as sr,country_list as cl WHERE sr.country_code =cl.iso_numeric '; 
-									$result = mysqli_query($link, $query); 
-									while($row = mysqli_fetch_array($result)) { 
-										echo('<tr><td>'.$row[0].'</td><td>'.$row[1].'</td><td>'.$row[2].'</td><td>'.$row[3].'</td><td>'.$row[4].'</td></tr>');	
-									}
-									echo("</table>");
-								?>
-								
-								
-							</div>
-							<div class="tab-pane" id="home">...</div>
-							<div class="tab-pane" id="profile">...</div>
-							<div class="tab-pane" id="messages">...</div>
-							<div class="tab-pane" id="settings">...</div>
-						</div>
-					</div>
-				</div>
-				
-				<!-- Tag System Dev Area -->
-				<div class="row">
-					<div class="col-md-6">
-						<div >
-							<form class="form-horizontal" id="tag-operate-form" role="form" >
-								<h1><i class="fa fa-bug"></i> Tag System Develop</h1>
-								<div class="input-group">
-									<span class="input-group-addon">SKU</span>	
-									<input id="tag-search" name="tag-search" class="form-control">
-								</div>	
-								
-								<button id="tag-submit" class="btn btn-danger fullwidth" type="submit">Here We Go ~</button>
-								
-							</form>
 						</div>
 					</div>
 				</div>

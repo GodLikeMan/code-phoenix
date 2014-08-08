@@ -37,13 +37,13 @@
 			
 		}
 		
-		public function getShipRecord($sku,$country){
+		public function getShipRecord($sku,$countryCode){
 			
-			if($country === '999' ){
+			if($countryCode === '999' ){
 				$query 	= 'SELECT cl.name,avg(sr.s_cost)  FROM shipping_record AS sr,country_list AS cl WHERE  sku="'.$sku.'" AND sr.country_code = cl.iso_numeric GROUP BY cl.name ';	
 			}
 			else{
-				$query = 'SELECT sr.id,cl.name,sr.s_cost FROM shipping_record AS sr,country_list AS cl WHERE (sku="'.$sku.'" AND sr.country_code  = "'.$country.'") AND sr.country_code = cl.iso_numeric ORDER BY sr.date_modified LIMIT 5 ';
+				$query = 'SELECT sr.id,cl.name,sr.s_cost FROM shipping_record AS sr,country_list AS cl WHERE (sku="'.$sku.'" AND sr.country_code  = "'.$countryCode.'") AND sr.country_code = cl.iso_numeric  ';
 			}			
 			$this->searchDB($query,'shipping_record',false);			
 		}

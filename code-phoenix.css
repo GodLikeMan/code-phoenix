@@ -27,7 +27,12 @@
 	
 /* Select
 ---------------------------------------------------*/	
-.dropdown-menu dt{text-transform:capitalize;}
+.dropdown-menu dt {text-transform:capitalize;}
+
+
+/* Misc
+---------------------------------------------------*/
+.tab-pane { padding-top:25px;}
 
 /* Misc
 ---------------------------------------------------*/	

@@ -128,29 +128,73 @@ $(document).ready(function(){
 		$('#display-result-extra').append('<li><a href="#dbi-price-history-tab" role="tab" data-toggle="tab"><i class="fa fa-fw fa-paw"></i> Price History</a></li>');
 		
 		$('#display-result').append('<div class="tab-content" id="display-result-extra-content"></div>');
-		$('#display-result-extra-content').append('<div class="tab-pane active" id="dbi-shipping-record-tab">********</div>');
-		$('#display-result-extra-content').append('<div class="tab-pane" id="dbi-price-history-tab">...</div>');
-		
-		updateBasicInfoShippingRecords();
+		$('#display-result-extra-content').append('<div class="tab-pane active" id="dbi-shipping-record-tab"></div>');
+		$('#display-result-extra-content').append('<div class="tab-pane" id="dbi-price-history-tab"></div>');
 	}
 	
+	
+	function initBasicInfoShipRecords(){
+		$('#dbi-shipping-record-tab').append( '<table id="ship-record-table" class="table table-hover"><thead></thead><tbody></tbody><table>');
+	}
 
 	
-	function updateBasicInfoShippingRecords(){
+	function updateBasicInfoShipRecords(){
+	
+	
 		//Display Shipping Records
 		
 		$.post("code-monkeys.php",{'countryCode':$.cookie('countryCode'),'sku':$.cookie('sku'),'query':'get_sr'},function(json){	
-			
-			/*
+			console.log(json);
 			var	info = $.parseJSON(json);
+			
 			if	(typeof(info.shipping_record)==='undefined') {
 				$('#dbi').append('<li id="dbi-no-sr" class="list-group-item">沒有貨運紀錄</li>');
 			}
 			else{
-				$('#dbi-shipping-record-tab').append( '<table id="ship-record-table" class="table table-hover"><table>');
-				$('#ship-record-table').append('<thead><tr><th>國家</th><th>平均實際運費 (TWD)</th></tr></thead><tbody></tbody>');
+				$('#dbi-no-sr').remove();//刪除顯示沒有紀錄
+				
+				if($.cookie('countryCode')==='999') {
+					$('#ship-record-table thead').append('<tr><th>國家</th><th>平均實際運費 (TWD)</th></tr>');
+					for(var i=0;i<info.shipping_record.length;i++){
+						$('#ship-record-table tbody').append( '<tr><td>'+info.shipping_record[i][0]+'</td><td> '+Math.round(info.shipping_record[i][1])+'</td></tr>');				
+					}							
+				}
+				else{
+					$('#ship-record-table thead').append('<tr><th>國家</th><th>實際運費 (TWD)</th><th>Shipping Provider</th><th>Package Type</th></tr>');
+					
+					for(var i=0;i<info.shipping_record.length;i++){
+						$('#ship-record-table tbody').append('<tr><tr>');
+						
+						//get shipping record tags by tag parser
+						$.ajax({
+						  type: "POST",
+						  url: "code-monkeys.php",
+						  data: {'sr_id': info.shipping_record[i][0] ,'query':'sr_tag'},
+						  async: false
+						})
+						  .done(function( json ) {
+							var	tags = $.parseJSON(json);
+							
+							$('#ship-record-table tbody').append('<tr><td>'+info.shipping_record[i][1]+'</td><td> '+info.shipping_record[i][2]+'</td></tr>');
+							
+							if(!(typeof(tags.sr_tag)==='undefined')){
+								for(var j=0;j<tags.sr_tag.length;j++){
+								
+									$('<td>'+tags.sr_tag[j][1]+'</td>').appendTo('#ship-record-table tbody tr:nth-child('+(i+1)+')');
+									
+									//console.log($('#ship-record-table tbody row').eq(j));
+									//.append(tags.sr_tag[j][1]);
+									//console.log();
+								}	
+							}
+
+						  });						
+						
+					}							
+				}
 			}
-			*/
+			
+			
 		});		
 		/*
 		if	(typeof(info.shipping_record)==='undefined') {
@@ -288,7 +332,7 @@ $(document).ready(function(){
 
 			if(info['message']=='ERROR'){
 				$("#display-result").html('<p>'+info.code+'</p>');
-				toggleArea(false);
+				//toggleArea(false);
 			}
 			else{
 			
@@ -298,6 +342,8 @@ $(document).ready(function(){
 				//generate BasicInfo Div
 				initBasicInfo();
 				updateBasicInfo(generateBasicInfoValues());
+				initBasicInfoShipRecords();
+				updateBasicInfoShipRecords();
 				
 				//passing values to IA and LP form
 				assignIAValue();
@@ -305,7 +351,7 @@ $(document).ready(function(){
 				
 				//showup hidden div
 				initShippingProvider( json );
-				toggleArea('#update-row');
+				//toggleArea('#update-row');
 				
 				$('#qs-save').prop('disabled', false).slideToggle();
 			}
@@ -415,4 +461,10 @@ $(document).ready(function(){
 		});
 	});
 	
+	//active data table plugin
+	$('.datagrid').dataTable();
+	
+	$('#product-cost-table tbody').on('click', 'td', function(){
+		console.log($(this).text());
+	});
 });
