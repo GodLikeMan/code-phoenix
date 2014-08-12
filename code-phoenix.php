@@ -35,37 +35,22 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<a class="navbar-brand" href="localhost">Code Phoenix Alpha</a>
+						<a class="navbar-brand" href="http://localhost/code-phoenix/code-phoenix.php">Code Phoenix Alpha</a>
 					</div>
 					<div class="navbar-collapse collapse">
 						<!-- Left Nav -->
 						<ul class="nav navbar-nav">
-							<li class="dropdown">
+							<li>
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-									Dummy Menu 1
-									<b class="caret"></b>
+									Price Compare
 								</a>
-								<ul class="dropdown-menu">
-									<li><a href="#">About Us</a></li>
-									<li><a href="#">Contact</a></li>
-								</ul>
-							  </li>
+							 </li>
 
-							<li class="dropdown">
+							<li>
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-									Dummy menu
-									<b class="caret"></b>
+									Inventory
 								</a>
-								<ul class="dropdown-menu">
-									<li><a href="#">TEST1</a></li>
-									<li><a href="#">TEST2</a></li>
-									<li><a href="#">TEST3</a></li>
-									<li class="divider"></li>
-									<li class="dropdown-header">Dropdown header test</li>
-									<li><a href="#">TEST</a></li>
-									<li><a href="#">TEST</a></li>
-								</ul>
-							</li>             
+							<li>             
 						</ul>
 					</div>
 				</div>

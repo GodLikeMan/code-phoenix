@@ -1,7 +1,9 @@
 /* Need to Implement systems */
 
 Header switch views
-
+	->Show active indicator function
+	->AJAX
+	
 Search and display co-po profit
 
 CSV Converter for import  or output to DB

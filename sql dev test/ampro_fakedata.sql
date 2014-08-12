@@ -7,7 +7,8 @@ USE ampro;
 
 INSERT INTO product(sku,cost)
 VALUES
-('test1',5566),('test2',56),('grax',2000),('graw',2200),('fle2',4000),('flf6',4300),('xcac',400),('xcz2',3300);
+('test1',5566),('test2',56),('grax',2000),('graw',2200),('fle2',4000),('flf6',4300),('xcac',400),('xcz2',3300),('sjb6',1800),('sjm2',1600),('sjo5',3500),('sjq1',4000),('sjs4',3300)
+,('sjs7',2500),('sjs9',4500);
 
 
 INSERT INTO seller(name,sell_platform)
@@ -28,7 +29,14 @@ VALUES
 ('fle2',1,210,90),
 ('flf6',1,369.95,0),
 ('xcac',1,29.49,0),
-('xcz2',1,169.99,60);
+('xcz2',1,169.99,60),
+('sjb6',1,250,20),
+('sjm2',1,147,14),
+('sjo5',1,326.66,0),
+('sjq1',1,373,0),
+('sjs4',1,277.6,0),
+('sjs7',1,226,17),
+('sjs9',1,259.99,90);
 
 INSERT INTO package_volume(sku,p_type,p_length,p_width,p_height,p_weight)
 VALUES
