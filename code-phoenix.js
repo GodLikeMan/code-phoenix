@@ -1,12 +1,14 @@
 $(document).ready(function(){
 	
 	//on hover switch views
-	$('#search-area a').on('mouseover',function(){
+	$('#search-area a').on('mouseover',function(){   
 		event.preventDefault();
 		$(this).tab('show');
 	});
 	
-
+	/*
+	*	初始化航運供應商的建置
+	*/
 	function initShippingProvider(json){
 		var	info = $.parseJSON(json);
 		var	str ='';
@@ -25,6 +27,9 @@ $(document).ready(function(){
 		});
 	}
 	
+	/*
+	*	初始化封裝類型選擇建置
+	*/
 	function initPackageTypeSelector(json){
 		var	info = $.parseJSON(json);
 		var	str ='';		
@@ -40,14 +45,23 @@ $(document).ready(function(){
 		
 	}
 	
+	/*
+	*	貨幣轉換，將參數c依"currencyExchangeRate"(匯率)轉換成新的貨幣值並回傳
+	*/
 	function currencyConvert(c){
 		return (parseFloat(c)*$.cookie('currencyExchangeRate',Number));
 	}
 	
+	/*
+	*	添加標籤，參數type選擇類型(可用CSS控制)，參數text為設定內容值
+	*/
 	function addLabel(type,text){
 		return '<span class="label '+type+'">'+text+'</span>';
 	}
 	
+	/*
+	*	設定cookies
+	*/
 	function setCookies(json){
 		var	info = $.parseJSON(json);
 		
@@ -64,7 +78,9 @@ $(document).ready(function(){
 
 	}
 
-	
+	/*
+	*	生成基本選項，回傳一個陣列，需要初始化生成
+	*/
 	function generateBasicInfoValues() {
 		
 		var productPrice = $.cookie('productPrice',Number);
@@ -91,6 +107,9 @@ $(document).ready(function(){
 		return arr;
 	}
 	
+	/*
+	*	更新基本訊息
+	*/
 	function updateBasicInfo(info){		
 		var label ="";
 		
@@ -109,13 +128,16 @@ $(document).ready(function(){
 		
 	}
 	
+	/*
+	*	初始化基本訊息
+	*/
 	function initBasicInfo(){
 		
 		$('#display-result').html('<ul id="dbi" class="list-group"></ul>');	
 		$('#dbi').append('<li id="dbi-sku" class="list-group-item capitalize"></li>');
 		$('#dbi').append('<li id="dbi-product-price" class="list-group-item list-group-item-success" ></li>');
 		$('#dbi').append('<li id="dbi-ship-price" class="list-group-item list-group-item-success" ></li>');
-		$('#dbi').append( '<li id="dbi-product-cost" class="list-group-item list-group-item-danger"></li>');
+		$('#dbi').append('<li id="dbi-product-cost" class="list-group-item list-group-item-danger"></li>');
 		$('#dbi').append('<li id="dbi-commission-cost" class="list-group-item list-group-item-danger"></li>');
 		$('#dbi').append('<li id="dbi-ship-cost" class="list-group-item list-group-item-danger"></li>');
 		$('#dbi').append('<li id="dbi-profit" class="list-group-item list-group-item-info"></li>');
@@ -132,12 +154,16 @@ $(document).ready(function(){
 		$('#display-result-extra-content').append('<div class="tab-pane" id="dbi-price-history-tab"></div>');
 	}
 	
-	
+	/*
+	*	初始化基礎 ship 紀錄並建置
+	*/
 	function initBasicInfoShipRecords(){
 		$('#dbi-shipping-record-tab').append( '<table id="ship-record-table" class="table table-hover"><thead></thead><tbody></tbody><table>');
 	}
 
-	
+	/*
+	*	更新基本ship紀錄
+	*/
 	function updateBasicInfoShipRecords(){
 	
 	
@@ -244,6 +270,9 @@ $(document).ready(function(){
 		}*/
 	}
 	
+	/*
+	*	切換區域
+	*/
 	function  toggleArea(id,active){
 		if(typeof(active)==='undefined') {active = true;}
 		
@@ -255,7 +284,7 @@ $(document).ready(function(){
 		}		
 	}
 	
-	//will change package type select
+	//	will change package type select
 	$("#ia-shipmethod").on("change",function(){
 		$.post("code-monkeys.php",{'shipping_provider':$('#ia-shipmethod :selected').text(),'query':'package_type'}
 			
@@ -264,10 +293,16 @@ $(document).ready(function(){
 		});	
 	});
 	
+	/*
+	*	清除id = "ei-div"的內容
+	*/
 	function cleanExtraInfo(){
 		$('#ei-div').html("");
 	}
-	
+	/*
+	*	快速的將表單結果分配儲存進去
+	*	有產品編號、海外費用、賣家、城鎮
+	*/
 	function assignIAValue(){
 		//assign Quick Result form values to Save This Result form 
 		$('#ia-sku').val($.cookie('sku'));
