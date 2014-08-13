@@ -7,7 +7,7 @@
 		<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
 		<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 		<link href="http://fonts.googleapis.com/css?family=Roboto+Condensed:400italic,700italic,400,700|Oswald:400,700" rel="stylesheet">
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.5.4/bootstrap-select.min.css" rel="stylesheet">
+		<link href="lib/bootstrap-select.min.css" rel="stylesheet">
 		<link href="//cdn.datatables.net/1.10.2/css/jquery.dataTables.css" rel="stylesheet">
 		<link href="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
 		<link href="lib/bootstrap-dialog.min.css" rel="stylesheet">
@@ -15,7 +15,7 @@
 		
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.5.4/bootstrap-select.min.js"></script>
+		<script src="lib/bootstrap-select.min.js"></script>
 		<script src="lib/jquery.cookie-1.4.1.min.js"></script>
 		<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 		<script src="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.js"></script>

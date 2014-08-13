@@ -269,33 +269,74 @@ $(document).ready(function(){
 	}
 	
 	$('#qs-save').on("click",function() {
+		
+		//save to cookie
+		$.cookie('sku',$('#qs-sku').val());
+		$.cookie('countryName',$('#qs-country option:selected').text());
+		$.cookie('countryCode',$('#qs-country').val());//國家
+		$.cookie('shipCost', $('#qs-shipcost').val());//收取運費
+		
+		/*
+		*	validate inpu data
+		*	
+		*	Country not selected -> abort and display warning
+		*	
+		*	沒有搜尋到此sku->	 abort and display warning
+		*/
+		
 	
-		//validate inpu data
-	
+		//popup hint for saving what data
+		BootstrapDialog.show({
+            title: '儲存實際運費到資料庫?',
+            message: '<table class="table table-hover"><tr><th>SKU</th><td>'+$.cookie('sku')+'</td></tr><tr><th>國家</th><td>'+$.cookie('countryName')+'</td></tr><tr><th>實際運費</th><td>'+$.cookie('shipCost')+'</td></tr></table>',
+            type: BootstrapDialog.TYPE_WARNING, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
+			closable: false,
+			buttons: [{
+                label: '確認',
+				icon: 'glyphicon glyphicon-send',
+				autospin: true,
+                action: function(dialog) {
+					//Start AJAX
+					
+					//save data to database 
+					$.post("code-monkeys.php",{'sku':$.cookie('sku'),'countryCode':$.cookie('countryCode'),'shipCost':$.cookie('shipCost'),'query':'save_ship_record'},function(json){
+					
+						var	info = $.parseJSON(json);
+
+						if(info['message']=='ERROR'){
+							dialog.setClosable(true);
+							dialog.setType(BootstrapDialog.TYPE_DANGER);
+							dialog.getModalBody().html('<p>'+info.code+'</p>');
+							dialog.getModalFooter().hide();
+							dialog.setTitle(info.message);
+						}
+						else{
+							//show success msg!
+							dialog.setType(BootstrapDialog.TYPE_SUCCESS);
+							dialog.getModalBody().html('<p>儲存成功!</p>');
+							setTimeout(function(){ dialog.close(); }, 2000);
+						}	
+					});					
+                }
+            }, {
+                label: '取消',
+				icon: 'glyphicon glyphicon-remove',
+                action: function(dialog) {
+					dialog.close();
+                }
+            }],
+            callback: function(result) {
+                // result will be true if button was click, while it will be false if users close the dialog directly.
+                alert('Result is: ' + result);
+            }
+        });
+		
+		/*
 		//disable button for anti-spam
 		$('#qs-save').prop('disabled', true).slideToggle();
 		
-		//popup hint for saving what data
-		
-		//save to cookie
-		$.cookie('countryCode',$('#qs-country').val() );//售價	
-		$.cookie('shipCost', $('#qs-shipcost').val());//收取運費
-		
-		//save data to database 
-		$.post("code-monkeys.php",{'sku':$.cookie('sku'),'countryCode':$.cookie('countryCode'),'shipCost':$.cookie('shipCost'),'query':'save_ship_record'},function(json){
-		
-			var	info = $.parseJSON(json);
-
-			if(info['message']=='ERROR'){
-				$("#display-result").html('<p>'+info.code+'</p>');
-				
-			}
-			else{
-				//show success msg!
-				
-				console.log(info);
-			}	
-		});		
+	
+		*/
 	});
 	
 	$("#quick-result-form").on( "submit", function() {

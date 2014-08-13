@@ -54,8 +54,14 @@
 		}
 		
 		public function saveShipRecord($sku,$countryCode,$shipCost){
-			$query = 'INSERT INTO shipping_record (sku,country_code,s_cost) VALUES ("'.$sku.'","'.$countryCode.'","'.$shipCost.'")';
-			$this->saveToDB($query,'save_ship_record',' Save Ship Record Error');	
+			if($countryCode === '999' ){
+				die( json_encode(array('message' => 'ERROR', 'code' => '要選擇國家')));
+			}
+			else{
+				$query = 'INSERT INTO shipping_record (sku,country_code,s_cost) VALUES ("'.$sku.'","'.$countryCode.'","'.$shipCost.'")';
+				$this->saveToDB($query,'save_ship_record',' Save Ship Record Error');	
+			}
+			
 		}
 		
 		public function getTagsBySKU($sku){
