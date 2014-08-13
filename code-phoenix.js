@@ -1,15 +1,15 @@
 $(document).ready(function(){
 	
 	//on hover switch views
-	$('#search-area a').on('mouseover',function(){   
+	$('#search-area a').on('mouseover',function() {   
 		event.preventDefault();
 		$(this).tab('show');
 	});
 	
 	/*
-	*	初始化航運供應商的建置
+	*	初始化航運供應商的建置 (.......)
 	*/
-	function initShippingProvider(json){
+	function initShippingProvider(json) {
 		var	info = $.parseJSON(json);
 		var	str ='';
 		
@@ -28,7 +28,7 @@ $(document).ready(function(){
 	}
 	
 	/*
-	*	初始化封裝類型選擇建置
+	*	初始化封裝類型選擇建置 (...挖哩勒 by Silver)
 	*/
 	function initPackageTypeSelector(json){
 		var	info = $.parseJSON(json);
@@ -64,7 +64,6 @@ $(document).ready(function(){
 	*/
 	function setCookies(json){
 		var	info = $.parseJSON(json);
-		
 		
 		$.cookie('sellPlatform',info.sell_platform);
 		$.cookie('productPrice', info.product_sellinfo[0][0].toFixed(2));//售價	
@@ -158,17 +157,17 @@ $(document).ready(function(){
 	*	初始化基礎 ship 紀錄並建置
 	*/
 	function initBasicInfoShipRecords(){
-		$('#dbi-shipping-record-tab').append( '<table id="ship-record-table" class="table table-hover"><thead></thead><tbody></tbody><table>');
+		//$('#ship-record-table').append('</table>');
+		//$('#dbi-shipping-record-tab').append( $('#ship-record-table'));
+		$('#dbi-shipping-record-tab').append( '<table id="ship-record-table" class="table table-hover datagrid"><thead></thead><tbody></tbody><table>');
 	}
 
 	/*
-	*	更新基本ship紀錄
+	*	更新Basic Info上的運費紀錄
 	*/
 	function updateBasicInfoShipRecords(){
 	
-	
 		//Display Shipping Records
-		
 		$.post("code-monkeys.php",{'countryCode':$.cookie('countryCode'),'sku':$.cookie('sku'),'query':'get_sr'},function(json){	
 			console.log(json);
 			var	info = $.parseJSON(json);
@@ -201,73 +200,23 @@ $(document).ready(function(){
 						  .done(function( json ) {
 							var	tags = $.parseJSON(json);
 							
-							$('#ship-record-table tbody').append('<tr><td>'+info.shipping_record[i][1]+'</td><td> '+info.shipping_record[i][2]+'</td></tr>');
+							$('#ship-record-table tbody').append('<tr id="sr-'+i+'"><td>'+info.shipping_record[i][1]+'</td><td> '+info.shipping_record[i][2]+'</td></tr>');
 							
 							if(!(typeof(tags.sr_tag)==='undefined')){
 								for(var j=0;j<tags.sr_tag.length;j++){
 								
-									$('<td>'+tags.sr_tag[j][1]+'</td>').appendTo('#ship-record-table tbody tr:nth-child('+(i+1)+')');
+									$('#sr-'+i).append('<td>'+tags.sr_tag[j][1]+'</td>');
 									
-									//console.log($('#ship-record-table tbody row').eq(j));
-									//.append(tags.sr_tag[j][1]);
-									//console.log();
 								}	
 							}
-
-						  });						
-						
+							else{$('#sr-'+i).append('<td></td><td></td>');}
+						});						
 					}							
 				}
 			}
-			
-			
-		});		
-		/*
-		if	(typeof(info.shipping_record)==='undefined') {
-			$('#dbi').append('<li id="dbi-no-sr" class="list-group-item">沒有貨運紀錄</li>');
-		}
-		else{
-			$('#dbi-no-sr').remove();
-			
-			$('#dbi-shipping-record-tab').append( '<table id="ship-record-table" class="table table-hover"><table>');
-			$('#ship-record-table').append('<thead><tr><th>國家</th><th>平均實際運費 (TWD)</th></tr></thead><tbody></tbody>');
-			
-			
-			if($('#qs-country').val() == '999'){
-					
-				str  += '<thead><tr><th>國家</th><th>平均實際運費 (TWD)</th></tr></thead><tbody>';	
-				for(var i=0;i<info.shipping_record.length;i++){
-					str +=  '<tr><td>'+info.shipping_record[i][0]+'</td><td> '+info.shipping_record[i][1]+'</td></tr>';				
-				}			
-			}
-			else{
-				str  += '<thead><tr><th>國家</th><th>實際運費 (TWD)</th><th>Shipping Provider</th><th>Package Type</th></tr></thead><tbody>';	
-				for(var i=0;i<info.shipping_record.length;i++){
-					str += '<td>'+info.shipping_record[i][1]+'</td><td> '+info.shipping_record[i][2]+'</td>';
-					
-					//get shipping record tags by tag parser
-					$.ajax({
-					  type: "POST",
-					  url: "code-monkeys.php",
-					  data: {'sr_id': info.shipping_record[i][0] ,'query':'sr_tag'},
-					  async: false
-					})
-					  .done(function( json ) {
-						var	tags = $.parseJSON(json);
-						//console.log(tags.sr_tag);
-						
-						for(var j=0;j<tags.sr_tag.length;j++){
-							str +=	'<td>'+tags.sr_tag[j][1]+'</td>';
-						}						
-						
-					  });						
-					
-					str+='</tr>';
-
-				}				
-			}
-			str += '</tbody></table>';
-		}*/
+		})	.done(function(){
+				$('#ship-record-table').DataTable();
+			});		
 	}
 	
 	/*
@@ -299,6 +248,7 @@ $(document).ready(function(){
 	function cleanExtraInfo(){
 		$('#ei-div').html("");
 	}
+	
 	/*
 	*	快速的將表單結果分配儲存進去
 	*	有產品編號、海外費用、賣家、城鎮
@@ -320,17 +270,16 @@ $(document).ready(function(){
 	
 	$('#qs-save').on("click",function() {
 	
+		//validate inpu data
+	
 		//disable button for anti-spam
 		$('#qs-save').prop('disabled', true).slideToggle();
-		
-				
-		//validate inpu data
 		
 		//popup hint for saving what data
 		
 		//save to cookie
-		$.cookie('productPrice',$('#lp-sell-price').val() );//售價	
-		$.cookie('shipPrice', $('#lp-ship-price').val());//收取運費
+		$.cookie('countryCode',$('#qs-country').val() );//售價	
+		$.cookie('shipCost', $('#qs-shipcost').val());//收取運費
 		
 		//save data to database 
 		$.post("code-monkeys.php",{'sku':$.cookie('sku'),'countryCode':$.cookie('countryCode'),'shipCost':$.cookie('shipCost'),'query':'save_ship_record'},function(json){
@@ -339,9 +288,11 @@ $(document).ready(function(){
 
 			if(info['message']=='ERROR'){
 				$("#display-result").html('<p>'+info.code+'</p>');
+				
 			}
 			else{
 				//show success msg!
+				
 				console.log(info);
 			}	
 		});		
@@ -497,8 +448,9 @@ $(document).ready(function(){
 	});
 	
 	//active data table plugin
-	$('.datagrid').dataTable();
+	$('.datagrid').DataTable();
 	
+	//test
 	$('#product-cost-table tbody').on('click', 'td', function(){
 		console.log($(this).text());
 	});
