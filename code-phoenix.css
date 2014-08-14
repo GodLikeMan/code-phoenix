@@ -30,13 +30,31 @@
 .dropdown-menu dt {text-transform:capitalize;}
 
 
-/* Misc
----------------------------------------------------*/
-.tab-pane { padding-top:25px;}
+/* Tag
+---------------------------------------------------*/	
+#tag-display {
+	margin-top:20px;
+	display:block;
+	background:rgb(220,220,220);
+	width: 100%;
+	min-height: 100px;
+	padding: 10px;
+}
+
+.tag-link {
+	display:inline-block;
+	margin-right:20px;
+	line-height:16px;
+	font-size:16px;
+}
+
+.tag-container{
+	display:inline-block;
+}
 
 /* Misc
 ---------------------------------------------------*/	
-
+.tab-pane { padding-top:25px;}
 #update-row{display:none;}
 #display-result{font-weight:bold;}
 .capitalize { text-transform:capitalize;}

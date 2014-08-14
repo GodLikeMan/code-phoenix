@@ -65,8 +65,8 @@
 		}
 		
 		public function getTagsBySKU($sku){
-			$query = 'SELECT tag.id,tag.name,tag.category FROM tag_product_map as tpm,tag  WHERE tpm.t_id = tag.id AND tpm.sku = "'.$sku.'"';
-			$this->searchDB($query,'get_product_tag',false);
+			$query = 'SELECT tag.id,tag.name,tag.category FROM tag_product_map as tpm,tag  WHERE tpm.t_id = tag.id AND "'.$sku.'" = tpm.sku';
+			$this->searchDB($query,'get_product_tag','Product Tag Search Error');
 		}
 		
 		public function savePriceRecord($sku,$sellerId,$productPrice,$shipPrice,$currency){

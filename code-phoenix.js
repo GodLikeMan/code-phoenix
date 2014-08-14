@@ -7,7 +7,7 @@ $(document).ready(function(){
 	});
 	
 	/*
-	*	新增資料至ID:"ia-shipmethod"並展生該資料的選擇器 (.......)
+	*	初始化航運供應商的建置 (.......)
 	*/
 	function initShippingProvider(json) {
 		var	info = $.parseJSON(json);
@@ -28,7 +28,7 @@ $(document).ready(function(){
 	}
 	
 	/*
-	*	新增資料至ID:"ia-package"並展生該資料的選擇器 (...挖哩勒 by Silver)
+	*	初始化封裝類型選擇建置 (...挖哩勒 by Silver)
 	*/
 	function initPackageTypeSelector(json){
 		var	info = $.parseJSON(json);
@@ -391,11 +391,10 @@ $(document).ready(function(){
 		$.cookie('productPrice',$('#lp-sell-price').val());
 		$.cookie('shipPrice',$('#lp-ship-price').val());
 		
-		if ($('#dbi').length >0 ) {
+		if ($('#dbi').length >0 ) {//check  the initBasicInfo() function  is triggered or not
 			updateBasicInfo(generateBasicInfoValues());
 			$('#lp-save').prop('disabled', false).slideDown();//Enable and show the button for saving 
 		}
-		
 
 	});
 	
@@ -478,14 +477,33 @@ $(document).ready(function(){
 	});
 	
 	$("#tag-operate-form").on( "submit", function() {
-	
 		event.preventDefault();
+		
+		//assign value to cookie
+		$.cookie('sku',$('#tag-search').val());
+		
+		$.post("code-monkeys.php",{'sku':$.cookie('sku'),'query':'tag_search'},function(json){
 			
-		$.post("code-monkeys.php",$(this).serialize()+'&query=tag_search',function(json){
-			//console.log(json);
-			var	info = $.parseJSON(json);//parser json for check operate success or failed
+			var	info = $.parseJSON(json);
+			
+			if(info.message === 'ERROR'){
 				
+			}
+			else{
+				for(var i = 0; i<info.get_product_tag.length;i++){
+					'<ul class="tag-container"></ul>'
+					$('#tag-display').append('<li class="tag-link"><a href="#"><i class="fa fa-tags fa-fw"></i>'+info.get_product_tag[i][1]+'</a></li>');
+					console.log(info.get_product_tag[i][1]);
+				}
+			}
 		});
+	});
+	
+	//tag edit button triggered
+	$('#tag-edit').on('click',function(){
+		event.preventDefault();
+		
+		console.log('tgh');
 	});
 	
 	//active data table plugin

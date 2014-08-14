@@ -58,6 +58,21 @@ VALUES
 ('EMS Package','package type'),
 ('Fedex Envlope','package type');
 
+/*Product tags*/
+INSERT INTO tag(name,category) 
+VALUES
+('黑色','product'),
+('車型','product'),
+('好用$_$','product'),
+('媽我在這!@#$%^&*()_+=~`','product');
+
+INSERT INTO tag_product_map(t_id,sku)
+VALUES
+(8,'test1'),
+(9,'test1'),
+(10,'test1'),
+(11,'test1');
+
 INSERT INTO shipping_record(sku,country_code,s_cost)
 VALUES
 ('test1',158,3939),

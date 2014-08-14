@@ -262,7 +262,7 @@
 				
 				<!-- Tag System Dev Area -->
 				<div class="row">
-					<div class="col-md-6">
+					<div class="col-md-8">
 						<div >
 							<form class="form-horizontal" id="tag-operate-form" role="form" >
 								<h1><i class="fa fa-bug"></i> Tag System Develop</h1>
@@ -270,10 +270,11 @@
 									<span class="input-group-addon">SKU</span>	
 									<input id="tag-search" name="tag-search" class="form-control">
 								</div>	
-								
 								<button id="tag-submit" class="btn btn-danger fullwidth" type="submit">Here We Go ~</button>
-								
 							</form>
+						</div>
+						<div id="tag-display">
+							<a id="tag-edit" href="#" class="btn btn-default pull-right">編輯標籤</a>
 						</div>
 					</div>
 				</div>
