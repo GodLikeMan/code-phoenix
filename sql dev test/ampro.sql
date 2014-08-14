@@ -178,7 +178,7 @@ CREATE TABLE IF NOT EXISTS `country_list` (
 */
 CREATE TABLE IF NOT EXISTS `tag` (
 	`id` INT AUTO_INCREMENT,
-	`name` VARCHAR(30) NOT NULL,
+	`name` CHAR(30) NOT NULL,
 	`category` VARCHAR(30) NOT NULL DEFAULT 'None',
 	PRIMARY KEY (`id`)
 	
