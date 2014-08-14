@@ -251,7 +251,7 @@ $(document).ready(function(){
 	
 	/*
 	*	快速的將表單結果分配儲存進去
-	*	有產品編號、海外費用、賣家、城鎮
+	*	有產品編號、貨運費用、賣家、國家
 	*/
 	function assignIAValue(){
 		//assign Quick Result form values to Save This Result form 
@@ -391,16 +391,17 @@ $(document).ready(function(){
 		$.cookie('productPrice',$('#lp-sell-price').val());
 		$.cookie('shipPrice',$('#lp-ship-price').val());
 		
-		updateBasicInfo(generateBasicInfoValues());
+		if ($('#dbi').length >0 ) {
+			updateBasicInfo(generateBasicInfoValues());
+			$('#lp-save').prop('disabled', false).slideDown();//Enable and show the button for saving 
+		}
 		
-		$('#lp-save').prop('disabled', false).slideToggle();
+
 	});
 	
 	//Test for product save
 	$('#lp-save').on('click',function(){
 	
-		//disable button for anti-spam
-		$('#lp-save').prop('disabled', true).slideToggle();
 				
 		//validate inpu data
 		
@@ -414,11 +415,13 @@ $(document).ready(function(){
 			var	info = $.parseJSON(json);
 
 			if(info['message']=='ERROR'){
-				$("#display-result").html('<p>'+info.code+'</p>');
+				$("#display-result").html('<p>'+info.code+'</p>');			
+				$('#lp-save').prop('disabled', true).slideUp();//disable button for anti-spam
 			}
 			else{
 				//show success msg!
-				console.log(info);
+				//console.log(info);
+				$('#lp-save').prop('disabled', false).slideDown();//Enable and show the button for saving 
 			}	
 		});
 	
