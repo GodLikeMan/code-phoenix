@@ -64,9 +64,8 @@
 					<!-- input Sku -->
 					<div class="col-md-3">
 						
-						
 						<form class="form-horizontal" id="quick-result-form" role="form" >
-						<h1><i id="whatsupdoc" class="fa fa-user-md fa-fw"></i> Quick Result</h1>
+							<h1><i id="whatsupdoc" class="fa fa-user-md fa-fw"></i> Quick Result</h1>
 							<div class="input-group">
 								<span class="input-group-addon">SKU</span>	
 								<input id="qs-sku" name="qs-sku" type="text" class="form-control" placeholder="sku input here  (ﾟ∀ﾟ)" required maxlength="8">

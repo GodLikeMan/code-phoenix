@@ -65,7 +65,7 @@
 		}
 		
 		public function getTagsBySKU($sku){
-			$query = "SELECT tag FROM tag_product_map";
+			$query = 'SELECT tag FROM tag_product_map as tpm, WHERE tpm.t_id = AND tpm.sku = "'.$sku.'"';
 			//$this->searchDB($query,'shipping_record',false);
 		}
 		
@@ -139,7 +139,7 @@
 				$this->getPackageType();
 			}
 			else if($this->works==='tag_search'){
-				$this->getTagsBySKU($_POST['tag-search']);
+				$this->getTagsBySKU($_POST['sku']);
 			}
 			else if($this->works === 'sr_tag'){
 				$this->getShipRecordTag($_POST['sr_id']);

@@ -296,9 +296,8 @@ $(document).ready(function(){
 				icon: 'glyphicon glyphicon-send',
 				autospin: true,
                 action: function(dialog) {
-					//Start AJAX
-					
-					//save data to database 
+				
+					//Start AJAX save data to database 
 					$.post("code-monkeys.php",{'sku':$.cookie('sku'),'countryCode':$.cookie('countryCode'),'shipCost':$.cookie('shipCost'),'query':'save_ship_record'},function(json){
 					
 						var	info = $.parseJSON(json);
@@ -314,6 +313,7 @@ $(document).ready(function(){
 							//show success msg!
 							dialog.setType(BootstrapDialog.TYPE_SUCCESS);
 							dialog.getModalBody().html('<p>儲存成功!</p>');
+							dialog.setTitle('2秒後會自動關閉');
 							setTimeout(function(){ dialog.close(); }, 2000);
 						}	
 					});					
@@ -331,12 +331,10 @@ $(document).ready(function(){
             }
         });
 		
-		/*
-		//disable button for anti-spam
-		$('#qs-save').prop('disabled', true).slideToggle();
+		//disable and hide button for anti-spam
+		$('#qs-save').prop('disabled', true).slideUp();
 		
 	
-		*/
 	});
 	
 	$("#quick-result-form").on( "submit", function() {
@@ -359,6 +357,7 @@ $(document).ready(function(){
 
 			if(info['message']=='ERROR'){
 				$("#display-result").html('<p>'+info.code+'</p>');
+				$('#qs-save').prop('disabled', true).slideUp();//disable and hide button for anti-spam
 				//toggleArea(false);
 			}
 			else{
@@ -380,7 +379,7 @@ $(document).ready(function(){
 				initShippingProvider( json );
 				//toggleArea('#update-row');
 				
-				$('#qs-save').prop('disabled', false).slideToggle();
+				$('#qs-save').prop('disabled', false).slideDown();//Enable and show the button for saving ship record
 			}
 		});
 	});
@@ -480,10 +479,8 @@ $(document).ready(function(){
 		event.preventDefault();
 			
 		$.post("code-monkeys.php",$(this).serialize()+'&query=tag_search',function(json){
-				//console.log(json);
-				
-				var	info = $.parseJSON(json);//parser json for check operate success or failed
-				
+			//console.log(json);
+			var	info = $.parseJSON(json);//parser json for check operate success or failed
 				
 		});
 	});
