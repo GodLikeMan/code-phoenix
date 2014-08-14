@@ -7,7 +7,7 @@ $(document).ready(function(){
 	});
 	
 	/*
-	*	初始化航運供應商的建置 (.......)
+	*	新增資料至ID:"ia-shipmethod"並展生該資料的選擇器 (.......)
 	*/
 	function initShippingProvider(json) {
 		var	info = $.parseJSON(json);
@@ -28,7 +28,7 @@ $(document).ready(function(){
 	}
 	
 	/*
-	*	初始化封裝類型選擇建置 (...挖哩勒 by Silver)
+	*	新增資料至ID:"ia-package"並展生該資料的選擇器 (...挖哩勒 by Silver)
 	*/
 	function initPackageTypeSelector(json){
 		var	info = $.parseJSON(json);
