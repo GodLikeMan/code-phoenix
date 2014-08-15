@@ -8,8 +8,7 @@
 		<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 		<link href="http://fonts.googleapis.com/css?family=Roboto+Condensed:400italic,700italic,400,700|Oswald:400,700" rel="stylesheet">
 		<link href="lib/bootstrap-select.min.css" rel="stylesheet">
-		<link href="//cdn.datatables.net/1.10.2/css/jquery.dataTables.css" rel="stylesheet">
-		<link href="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
+		<link href="lib/jquery.bootgrid.css" rel="stylesheet">
 		<link href="lib/bootstrap-dialog.min.css" rel="stylesheet">
 		<link href="code-phoenix.css" rel="stylesheet">
 		
@@ -17,8 +16,7 @@
 		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 		<script src="lib/bootstrap-select.min.js"></script>
 		<script src="lib/jquery.cookie-1.4.1.min.js"></script>
-		<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
-		<script src="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+		<script src="lib/jquery.bootgrid.min.js"></script>
 		<script src="lib/bootstrap-dialog.min.js"></script>
 		<script src="code-phoenix.js"></script>
 	
@@ -222,20 +220,19 @@
 							
 								<?php
 									//generate  shipping record table
-									echo('<table id="mod-cost-table" class="table table-hover datagrid">');
+									echo('<table id="mod-cost-table" class="table table-hover">');
 									
 									$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
 									mysqli_set_charset ($link ,"utf8");
 									$query = 'SELECT sr.id, sr.sku, cl.name, sr.s_cost,  sr.date_modified FROM shipping_record as sr,country_list as cl WHERE sr.country_code =cl.iso_numeric '; 
 									$result = mysqli_query($link, $query); 
-									echo '<thead><tr><td>***</td><td>***</td><td>***</td><td>***</td><td>***</td></tr></thead><tbody>';
+									echo '<thead><tr><th data-column-id="a">a</th><th data-column-id="b">b</th><th data-column-id="c">c</th><th data-column-id="d">d</th><th data-column-id="e">1</th></tr></thead><tbody>';
 									while($row = mysqli_fetch_array($result)) { 
 										echo('<tr><td>'.$row[0].'</td><td>'.$row[1].'</td><td>'.$row[2].'</td><td>'.$row[3].'</td><td>'.$row[4].'</td></tr>');	
 									}
 									echo("</tbody></table>");
 								?>
-								
-								
+		
 							</div>
 							<div class="tab-pane" id="product-cost-tab">
 								<?php
@@ -246,7 +243,7 @@
 									mysqli_set_charset ($link ,"utf8");
 									$query = 'SELECT * FROM product'; 
 									$result = mysqli_query($link, $query); 
-									echo '<thead><tr><td>Sku</td><td>Short Description</td><td>Cost</td><td>Created Date</td></tr></thead><tbody>';
+									echo '<thead><tr><th data-column-id="sku">Sku</th><th data-column-id="shortDescription">Short Description</th><th data-column-id="cost">Cost</th><th data-column-id="createdDate">Created Date</th></tr></thead><tbody>';
 									while($row = mysqli_fetch_array($result)) { 
 										echo('<tr><td>'.$row[0].'</td><td>'.$row[1].'</td><td>'.$row[2].'</td><td>'.$row[3].'</td></tr>');	
 									}

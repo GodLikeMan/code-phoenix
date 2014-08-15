@@ -157,9 +157,7 @@ $(document).ready(function(){
 	*	初始化基礎 ship 紀錄並建置
 	*/
 	function initBasicInfoShipRecords(){
-		//$('#ship-record-table').append('</table>');
-		//$('#dbi-shipping-record-tab').append( $('#ship-record-table'));
-		$('#dbi-shipping-record-tab').append( '<table id="ship-record-table" class="table table-hover datagrid"><thead></thead><tbody></tbody><table>');
+		$('#dbi-shipping-record-tab').append( '<table id="ship-record-table" class="table table-hover table-condensed"><thead></thead><tbody></tbody><table>');
 	}
 
 	/*
@@ -179,13 +177,13 @@ $(document).ready(function(){
 				$('#dbi-no-sr').remove();//刪除顯示沒有紀錄
 				
 				if($.cookie('countryCode')==='999') {
-					$('#ship-record-table thead').append('<tr><th>國家</th><th>平均實際運費 (TWD)</th></tr>');
+					$('#ship-record-table thead').append('<tr><th data-column-id="country">國家</th><th data-column-id="shipcost">平均實際運費 (TWD)</th></tr>');
 					for(var i=0;i<info.shipping_record.length;i++){
 						$('#ship-record-table tbody').append( '<tr><td>'+info.shipping_record[i][0]+'</td><td> '+Math.round(info.shipping_record[i][1])+'</td></tr>');				
 					}							
 				}
 				else{
-					$('#ship-record-table thead').append('<tr><th>國家</th><th>實際運費 (TWD)</th><th>Shipping Provider</th><th>Package Type</th></tr>');
+					$('#ship-record-table thead').append('<tr><th data-column-id="country">國家</th><th data-column-id="shipcost">實際運費 (TWD)</th><th data-column-id="shipProvider">Shipping Provider</th><th data-column-id="packageType">Package Type</th></tr>');
 					
 					for(var i=0;i<info.shipping_record.length;i++){
 						$('#ship-record-table tbody').append('<tr><tr>');
@@ -215,7 +213,7 @@ $(document).ready(function(){
 				}
 			}
 		})	.done(function(){
-				$('#ship-record-table').DataTable();
+				$('#ship-record-table').bootgrid();
 			});		
 	}
 	
@@ -507,7 +505,7 @@ $(document).ready(function(){
 	});
 	
 	//active data table plugin
-	$('.datagrid').DataTable();
+	$('#mod-cost-table , #product-cost-table').bootgrid();
 	
 	//test
 	$('#product-cost-table tbody').on('click', 'td', function(){

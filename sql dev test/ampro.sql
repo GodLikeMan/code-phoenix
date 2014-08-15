@@ -198,6 +198,7 @@ CREATE TABLE IF NOT EXISTS `tag_product_map` (
 	`id` INT AUTO_INCREMENT,
 	`t_id` INT UNSIGNED NOT NULL,
 	`sku` VARCHAR(15) NOT NULL,
+	UNIQUE KEY (`t_id`,`sku`),
 	PRIMARY KEY (`id`)
 	
 ) ENGINE InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci ;
