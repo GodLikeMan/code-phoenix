@@ -69,6 +69,9 @@
 			$this->searchDB($query,'get_product_tag','Product Tag Search Error');
 		}
 		
+		public function deleteProductTagMap($sku,$tagId){
+		}
+		
 		public function savePriceRecord($sku,$sellerId,$productPrice,$shipPrice,$currency){
 			$query	= 'INSERT INTO product_price_record (sku,seller_id,price,s_price,currency) VALUES ("'.$sku.'","'.$sellerId.'","'.$productPrice.'","'.$shipPrice.'","'.$currency.'")';	
 			$this->saveToDB($query,'save_price_record','Listing Price Save Error');			
@@ -140,6 +143,9 @@
 			}
 			else if($this->works==='tag_search'){
 				$this->getTagsBySKU($_POST['sku']);
+			}
+			else if($this->works==='tag_delete'){
+				$this->deleteProductTagMap($_POST['sku'],$_POST['tagId']);
 			}
 			else if($this->works === 'sr_tag'){
 				$this->getShipRecordTag($_POST['sr_id']);

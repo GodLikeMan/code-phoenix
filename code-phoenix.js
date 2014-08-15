@@ -474,35 +474,78 @@ $(document).ready(function(){
 		$(this).children('h1').children('i').toggleClass('fa-spin');
 	});
 	
-	$("#tag-operate-form").on( "submit", function() {
-		event.preventDefault();
+	//search by tag  for showing related products preview
+	$('#tag-search-btn').on('click',function(){
+		console.log('tag-search-btn');
+	});
+	
+	//search this sku for edit tags and showing info
+	$('#tag-sku-search-btn').on('click',function(){
+		console.log('tag-sku-search-btn');
 		
 		//assign value to cookie
-		$.cookie('sku',$('#tag-search').val());
+		$.cookie('sku',$('#tag-sku-search').val());
 		
 		$.post("code-monkeys.php",{'sku':$.cookie('sku'),'query':'tag_search'},function(json){
-			
+
 			var	info = $.parseJSON(json);
 			
 			if(info.message === 'ERROR'){
-				
+				//showing error dialog
 			}
 			else{
+				//generate tag display
+				$('#tag-display').html("").append('<ul id="tag-container"></ul>');
 				for(var i = 0; i<info.get_product_tag.length;i++){
-					'<ul class="tag-container"></ul>'
-					$('#tag-display').append('<li class="tag-link"><a href="#"><i class="fa fa-tags fa-fw"></i>'+info.get_product_tag[i][1]+'</a></li>');
-					console.log(info.get_product_tag[i][1]);
+					$('#tag-container').append('<li class="tag-link"><a href="#"><i class="fa fa-tags fa-fw"></i>'+info.get_product_tag[i][1]+'</a></li>');
 				}
+				$('#tag-container').append('<a id="tag-edit" href="#" class="btn btn-default pull-right">編輯標籤</a>');
+				
+				//generate tag edit 
+				$('#tag-display').append('<div id="tag-editor"></div>');
+				$('#tag-editor').append('<table id="tag-editor-table" class="table table-condensed table-hover"><tbody></tbody></table>');
+				$('#tag-editor-table tbody:first').append('<tr><td colspan="2"><input class="form-control" maxlength=30 placeholder="新增標籤"></td></tr>');
+				
+				for(var i = 0; i<info.get_product_tag.length;i++){
+					if(info.get_product_tag[i] != undefined){
+						$('#tag-editor-table tbody:first').append(
+							'<tr><td>'+info.get_product_tag[i][1]+'</td><td>'+
+							'<button type=\"button\" class=\"btn btn-xs btn-default command-delete\" data-row-id="tag-id-'+info.get_product_tag[i][0]+'">'+
+							'<i class="fa fa-trash-o"></i></button></td></tr>'
+						);
+					}	
+				}
+				
+				$('#tag-editor').append('<button type="button" id="tag-editor-quit" class="btn btn-info">離開編輯</button>');
+				
+				
+				$('#tag-editor').hide();
+				
+				//tag edit button triggered
+				$('#tag-edit').on('click',function(){
+					event.preventDefault();
+		
+					$('#tag-container').hide();//hide the tags for show up tag edit area
+					$('#tag-editor').slideDown("slow");	
+				});
+				
+				//tag edit quit button  triggered
+				$('#tag-editor-quit').on('click',function(){
+					$('#tag-editor').hide();
+					$('#tag-container').fadeIn("slow");	
+				});
+				
+				$('.command-delete').on('click',function(){
+					$.post("code-monkeys.php",{'sku':$.cookie('sku'),'query':'tag_delete'},function(json){
+						
+					});
+				});
+				
 			}
-		});
+		});		
+		
 	});
 	
-	//tag edit button triggered
-	$('#tag-edit').on('click',function(){
-		event.preventDefault();
-		
-		console.log('tgh');
-	});
 	
 	//active data table plugin
 	$('#mod-cost-table , #product-cost-table').bootgrid();

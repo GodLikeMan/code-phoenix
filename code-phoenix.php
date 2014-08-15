@@ -264,15 +264,23 @@
 							<form class="form-horizontal" id="tag-operate-form" role="form" >
 								<h1><i class="fa fa-bug"></i> Tag System Develop</h1>
 								<div class="input-group">
-									<span class="input-group-addon">SKU</span>	
-									<input id="tag-search" name="tag-search" class="form-control">
+									<span class="input-group-addon" >SKU</span></span>
+									<input id="tag-sku-search" name="tag-sku-search" class="form-control" placeholder="搜尋產品" maxlength=15>
+									<span class="input-group-btn">
+										<button id="tag-sku-search-btn" class="btn btn-danger" type="button"><i class="fa fa-search"></i></button>
+									</span>										
+								</div>									
+								<div class="input-group">
+									<span class="input-group-addon ">Tag</span></span>
+									<input id="tag-search" name="tag-search" class="form-control" placeholder="用標籤搜尋相關產品" maxlength=30>
+									<span class="input-group-btn">
+										<button id="tag-search-btn" class="btn btn-danger" type="button"><i class="fa fa-search"></i></button>
+									</span>	
 								</div>	
-								<button id="tag-submit" class="btn btn-danger fullwidth" type="submit">Here We Go ~</button>
 							</form>
 						</div>
-						<div id="tag-display">
-							<a id="tag-edit" href="#" class="btn btn-default pull-right">編輯標籤</a>
-						</div>
+						<div id="tag-display"></div>
+						<div id="sku-display"></div>
 					</div>
 				</div>
 				
