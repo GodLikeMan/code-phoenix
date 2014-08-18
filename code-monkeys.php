@@ -61,8 +61,23 @@
 				$query = 'INSERT INTO shipping_record (sku,country_code,s_cost) VALUES ("'.$sku.'","'.$countryCode.'","'.$shipCost.'")';
 				$this->saveToDB($query,'save_ship_record',' Save Ship Record Error');	
 			}
-			
 		}
+		
+		public function getTagSearchResult($searchTerm){
+			
+			$link = $this->getDBLink();
+			
+			$query = 'SELECT id FROM tag WHERE name = "'.$searchTerm.'"';
+			
+			if($result = mysqli_query($link, $query)){
+				if(mysqli_num_rows($result)>0){
+					foreach($result as $row){
+						$query = 'SELECT tpm.sku FROM tag_product_map as tpm WHERE tpm.t_id = "'.$row['id'].'"';
+						$this->searchDB($query,'get_tag_search_result','WTF');
+					}
+				}
+			}
+		}		
 		
 		public function getTagsBySKU($sku){
 			$query = 'SELECT tag.id,tag.name,tag.category FROM tag_product_map as tpm,tag  WHERE tpm.t_id = tag.id AND "'.$sku.'" = tpm.sku';
@@ -141,8 +156,11 @@
 			else if ($this->works==='package_type'){
 				$this->getPackageType();
 			}
-			else if($this->works==='tag_search'){
+			else if($this->works==='tag_search_by_sku'){
 				$this->getTagsBySKU($_POST['sku']);
+			}
+			else if($this->works==='tag_search'){
+				$this->getTagSearchResult($_POST['searchTerm']);
 			}
 			else if($this->works==='tag_delete'){
 				$this->deleteProductTagMap($_POST['sku'],$_POST['tagId']);

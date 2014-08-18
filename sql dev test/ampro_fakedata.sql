@@ -71,7 +71,12 @@ VALUES
 (8,'test1'),
 (9,'test1'),
 (10,'test1'),
-(11,'test1');
+(11,'test1'),
+(8,'test2'),
+(8,'test3'),
+(8,'test4'),
+(8,'test5'),
+(8,'test6');
 
 INSERT INTO shipping_record(sku,country_code,s_cost)
 VALUES

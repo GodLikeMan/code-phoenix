@@ -474,37 +474,81 @@ $(document).ready(function(){
 		$(this).children('h1').children('i').toggleClass('fa-spin');
 	});
 	
+	function searchByTag(searchTerm){
+		$.post('code-monkeys.php',{'searchTerm':$.cookie('tagSearch'),'query':'tag_search'},function(json){
+			console.log(json);
+			var info = $.parseJSON(json);
+			
+			if(info === undefined){
+				$('#tag-result-display').html('<h1>ERROR</h1>');
+			}
+			else{
+				//process the result SKUs
+				$('#tag-result-display').html('<div id="test-grid" class="row"></div>');
+				for(var i = 0;i<info.get_tag_search_result.length;i++){
+					
+					$('#test-grid').append('<div class="col-xs-12  col-sm-6 col-md-4">'+info.get_tag_search_result[i][0]+'</div>');
+					
+				}
+			}
+			//console.log(info.get_tag_search_result.length);
+
+		});
+	}
+	
+	function displayTagSearchResult(){
+	}
+	
 	//search by tag  for showing related products preview
-	$('#tag-search-btn').on('click',function(){
+	$('#tag-search-form').on('submit',function(){
 		console.log('tag-search-btn');
+		
+		event.preventDefault();
+		
+		//hide tag display area
+		$('#tag-display').empty().hide();
+		//display search terms
+		
+		$.cookie('tagSearch',$('#tag-search').val().toLowerCase());
+		searchByTag($.cookie('tagSearch'));
+		console.log($.cookie('tagSearch'));
+		//display search result
+			
+			//have result
+			//no result
 	});
 	
 	//search this sku for edit tags and showing info
-	$('#tag-sku-search-btn').on('click',function(){
+	$('#tag-sku-search-form').on('submit',function(){
 		console.log('tag-sku-search-btn');
+		
+		event.preventDefault();
 		
 		//assign value to cookie
 		$.cookie('sku',$('#tag-sku-search').val());
 		
-		$.post("code-monkeys.php",{'sku':$.cookie('sku'),'query':'tag_search'},function(json){
+		$.post("code-monkeys.php",{'sku':$.cookie('sku'),'query':'tag_search_by_sku'},function(json){
 
 			var	info = $.parseJSON(json);
 			
 			if(info.message === 'ERROR'){
 				//showing error dialog
+				$('#tag-display').empty().hide();
+				$('#tag-result-display').html('<h2>No Result</h2>');
 			}
 			else{
 				//generate tag display
-				$('#tag-display').html("").append('<ul id="tag-container"></ul>');
+				$('#tag-result-display').html('<div id="tag-display"></div>');
+				$('#tag-display').empty().append('<ul id="tag-container"></ul>');
 				for(var i = 0; i<info.get_product_tag.length;i++){
-					$('#tag-container').append('<li class="tag-link"><a href="#"><i class="fa fa-tags fa-fw"></i>'+info.get_product_tag[i][1]+'</a></li>');
+					$('#tag-container').append('<li class="tag-link"><a href="#" data-tag-name="'+info.get_product_tag[i][1]+'"><i class="fa fa-tags fa-fw"></i>'+info.get_product_tag[i][1]+'</a></li>');
 				}
 				$('#tag-container').append('<a id="tag-edit" href="#" class="btn btn-default pull-right">編輯標籤</a>');
 				
 				//generate tag edit 
 				$('#tag-display').append('<div id="tag-editor"></div>');
 				$('#tag-editor').append('<table id="tag-editor-table" class="table table-condensed table-hover"><tbody></tbody></table>');
-				$('#tag-editor-table tbody:first').append('<tr><td colspan="2"><input class="form-control" maxlength=30 placeholder="新增標籤"></td></tr>');
+				$('#tag-editor-table tbody:first').append('<tr class="active"><td colspan="2"><form class="form-horizontal"><div class="input-group fullwidth"><input class="form-control" maxlength=30 placeholder="新增標籤"><span class="input-group-btn"><button class="btn btn-inverse">submit</button></span></div></form></td></tr>');
 				
 				for(var i = 0; i<info.get_product_tag.length;i++){
 					if(info.get_product_tag[i] != undefined){
@@ -516,10 +560,15 @@ $(document).ready(function(){
 					}	
 				}
 				
-				$('#tag-editor').append('<button type="button" id="tag-editor-quit" class="btn btn-info">離開編輯</button>');
+				//Search tag with ajax
+				$('.tag-link a').on('click',function(){	
+					event.preventDefault();
+					$.cookie('tagSearch',$(this).data('tagName').toLowerCase());
+					searchByTag($.cookie('tagSearch'));
+					console.log($.cookie('tagSearch'));
+				});
 				
-				
-				$('#tag-editor').hide();
+				$('#tag-editor').append('<button type="button" id="tag-editor-quit" class="btn btn-info">離開編輯</button>').hide();
 				
 				//tag edit button triggered
 				$('#tag-edit').on('click',function(){
@@ -535,17 +584,18 @@ $(document).ready(function(){
 					$('#tag-container').fadeIn("slow");	
 				});
 				
+				//ajax delete tag
 				$('.command-delete').on('click',function(){
 					$.post("code-monkeys.php",{'sku':$.cookie('sku'),'query':'tag_delete'},function(json){
 						
 					});
 				});
 				
+				$('#tag-display').show();
 			}
 		});		
 		
 	});
-	
 	
 	//active data table plugin
 	$('#mod-cost-table , #product-cost-table').bootgrid();

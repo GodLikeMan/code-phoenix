@@ -261,26 +261,29 @@
 				<div class="row">
 					<div class="col-md-8">
 						<div >
-							<form class="form-horizontal" id="tag-operate-form" role="form" >
+							<form class="form-horizontal" id="tag-sku-search-form" role="form" >
 								<h1><i class="fa fa-bug"></i> Tag System Develop</h1>
 								<div class="input-group">
 									<span class="input-group-addon" >SKU</span></span>
-									<input id="tag-sku-search" name="tag-sku-search" class="form-control" placeholder="搜尋產品" maxlength=15>
+									<input id="tag-sku-search" name="tag-sku-search" class="form-control" placeholder="搜尋產品" required maxlength=15>
 									<span class="input-group-btn">
-										<button id="tag-sku-search-btn" class="btn btn-danger" type="button"><i class="fa fa-search"></i></button>
+										<button id="tag-sku-search-btn" class="btn btn-danger" type="submit"><i class="fa fa-search"></i></button>
 									</span>										
-								</div>									
+								</div>
+							</form>
+							<form class="form-horizontal" id="tag-search-form" role="form" >
 								<div class="input-group">
 									<span class="input-group-addon ">Tag</span></span>
-									<input id="tag-search" name="tag-search" class="form-control" placeholder="用標籤搜尋相關產品" maxlength=30>
+									<input id="tag-search" name="tag-search" class="form-control" placeholder="用標籤搜尋相關產品"  required maxlength=30>
 									<span class="input-group-btn">
-										<button id="tag-search-btn" class="btn btn-danger" type="button"><i class="fa fa-search"></i></button>
+										<button id="tag-search-btn" class="btn btn-danger" type="submit"><i class="fa fa-search"></i></button>
 									</span>	
 								</div>	
 							</form>
 						</div>
-						<div id="tag-display"></div>
-						<div id="sku-display"></div>
+						<div id="tag-result-display" class="col-md-8">
+							<div id="tag-display"></div>
+						</div>
 					</div>
 				</div>
 				
