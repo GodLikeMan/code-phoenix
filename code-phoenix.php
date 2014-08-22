@@ -19,7 +19,6 @@
 		<script src="lib/jquery.bootgrid.min.js"></script>
 		<script src="lib/bootstrap-dialog.min.js"></script>
 		<script src="code-phoenix.js"></script>
-	
 	</head>
 	<body>
 		<!-- Wrapper -->

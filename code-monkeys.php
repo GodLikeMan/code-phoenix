@@ -16,8 +16,8 @@
 		}
 		
 		public function getProductSellinfo($sku,$sellerId){
-			$query = 'SELECT price,s_price,currency,seller_id FROM product_sellinfo WHERE sku="'.$sku.'" AND seller_id="'.$sellerId.'"';
-			$this->searchDB($query,'product_sellinfo','Product Price Error');	
+			$query = 'SELECT price,s_price,currency FROM product_price_record WHERE sku="'.$sku.'" AND seller_id="'.$sellerId.'" ORDER BY date_created DESC LIMIT 1';
+			$this->searchDB($query,'product_price_record','Product Price Error');	
 		}
 		
 		public function	getSellPlatform($sellerId){
@@ -92,12 +92,6 @@
 			$this->saveToDB($query,'save_price_record','Listing Price Save Error');			
 		}
 		
-		
-		public function updateSellInfo($productPrice,$shipPrice,$sku,$sellerId){
-			$query	= 'UPDATE product_sellinfo SET price='.$productPrice.',s_price='.$shipPrice.' WHERE sku="'.$sku.'" and seller_id='.$sellerId;		
-			$this->saveToDB($query,'update_sell_info','Update Sell Info Error');				
-		}
-		
 		public function getDBLink(){
 			$link = mysqli_connect("localhost","ampro","whysoserious","ampro"); 
 			if (mysqli_connect_errno()){ die( json_encode(array('message' => 'ERROR', 'code' => 'DB connect lost! 。゜゜(´□｀。)°゜。')));	}
@@ -143,9 +137,9 @@
 				$this->getSellPlatform($_POST['sellerId']);
 				$this->getShippingProvider();
 			}
+			/*needs rewrite codes*/
 			else if ($this->works==='save_price_record') {
 				$this->savePriceRecord($_POST['sku'],$_POST['sellerId'],$_POST['productPrice'],$_POST['shipPrice'],$_POST['currency']);
-				$this->updateSellInfo($_POST['productPrice'],$_POST['shipPrice'],$_POST['sku'],$_POST['sellerId']);
 			}
 			else if ($this->works==='save_ship_record') {
 				$this->saveShipRecord($_POST['sku'],$_POST['countryCode'],$_POST['shipCost']);

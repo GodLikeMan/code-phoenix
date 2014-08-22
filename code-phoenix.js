@@ -64,12 +64,12 @@ $(document).ready(function(){
 	*/
 	function setCookies(json){
 		var	info = $.parseJSON(json);
-		
+		console.log(info);
 		$.cookie('sellPlatform',info.sell_platform);
-		$.cookie('productPrice', info.product_sellinfo[0][0].toFixed(2));//售價	
-		$.cookie('shipPrice', info.product_sellinfo[0][1].toFixed(2));//收取運費
+		$.cookie('productPrice', info.product_price_record[0][0].toFixed(2));//售價	
+		$.cookie('shipPrice', info.product_price_record[0][1].toFixed(2));//收取運費
 		$.cookie('currencyExchangeRate', 30);//匯率
-		$.cookie('currency',info.product_sellinfo[0][2]);//貨幣
+		$.cookie('currency',info.product_price_record[0][2]);//貨幣
 		$.cookie('totalIncome',($.cookie('productPrice',Number)+$.cookie('shipPrice',Number)));//售價加上運費
 		$.cookie('commissionCost',($.cookie('totalIncome',Number)*0.2).toFixed(2));//被抽成金額
 		$.cookie('productCost',info.product_cost[0][0]);
@@ -186,7 +186,6 @@ $(document).ready(function(){
 					$('#ship-record-table thead').append('<tr><th data-column-id="country">國家</th><th data-column-id="shipcost">實際運費 (TWD)</th><th data-column-id="shipProvider">Shipping Provider</th><th data-column-id="packageType">Package Type</th></tr>');
 					
 					for(var i=0;i<info.shipping_record.length;i++){
-						$('#ship-record-table tbody').append('<tr><tr>');
 						
 						//get shipping record tags by tag parser
 						$.ajax({
@@ -282,6 +281,7 @@ $(document).ready(function(){
 		*	沒有搜尋到此sku->	 abort and display warning
 		*/
 		
+		$('#qs-save').prop('disabled', true);//disable and hide button for anti-spam
 	
 		//popup hint for saving what data
 		BootstrapDialog.show({
@@ -293,7 +293,7 @@ $(document).ready(function(){
                 label: '確認',
 				icon: 'glyphicon glyphicon-send',
 				autospin: true,
-                action: function(dialog) {
+                action: function(dialogRef) {
 				
 					//Start AJAX save data to database 
 					$.post("code-monkeys.php",{'sku':$.cookie('sku'),'countryCode':$.cookie('countryCode'),'shipCost':$.cookie('shipCost'),'query':'save_ship_record'},function(json){
@@ -301,38 +301,34 @@ $(document).ready(function(){
 						var	info = $.parseJSON(json);
 
 						if(info['message']=='ERROR'){
-							dialog.setClosable(true);
-							dialog.setType(BootstrapDialog.TYPE_DANGER);
-							dialog.getModalBody().html('<p>'+info.code+'</p>');
-							dialog.getModalFooter().hide();
-							dialog.setTitle(info.message);
+							dialogRef.setClosable(true);
+							dialogRef.setType(BootstrapDialog.TYPE_DANGER);
+							dialogRef.getModalBody().html('<p>'+info.code+'</p>');
+							dialogRef.getModalFooter().hide();
+							dialogRef.setTitle(info.message);
 						}
 						else{
 							//show success msg!
-							dialog.setType(BootstrapDialog.TYPE_SUCCESS);
-							dialog.getModalBody().html('<p>儲存成功!</p>');
-							dialog.setTitle('2秒後會自動關閉');
-							setTimeout(function(){ dialog.close(); }, 2000);
+							dialogRef.setType(BootstrapDialog.TYPE_SUCCESS);
+							dialogRef.getModalBody().html('<p>儲存成功!</p>');
+							dialogRef.setTitle('2秒後會自動關閉');
+							setTimeout(function(){ dialogRef.close(); }, 2000);
 						}	
 					});					
                 }
             }, {
                 label: '取消',
 				icon: 'glyphicon glyphicon-remove',
-                action: function(dialog) {
-					dialog.close();
+                action: function(dialogRef) {
+					dialogRef.close();
                 }
             }],
-            callback: function(result) {
-                // result will be true if button was click, while it will be false if users close the dialog directly.
-                alert('Result is: ' + result);
+            onhidden: function(dialogRef) {// dialogRef will be true if button was click, while it will be false if users close the dialog directly.
+                
+				setTimeout(function(){  $('#qs-save').prop('disabled', false) }, 2000);
             }
         });
-		
-		//disable and hide button for anti-spam
-		$('#qs-save').prop('disabled', true).slideUp();
-		
-	
+
 	});
 	
 	$("#quick-result-form").on( "submit", function() {

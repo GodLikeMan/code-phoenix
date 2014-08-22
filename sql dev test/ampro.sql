@@ -9,9 +9,9 @@ USE ampro;
 *
 *	PRIMARY KEY  = sku
 *
-*	sku					:	商品代碼
-*	name				:	商品全名
-*	cost				:	進貨成本(新台幣)
+*	sku						:	商品代碼
+*	name					:	商品全名
+*	cost					:	進貨成本(新台幣)
 *	date_created	:	輸入資料庫日期
 *
 */
@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS `product`
 	`name` VARCHAR(80),
 	`cost` SMALLINT UNSIGNED DEFAULT 0,
 	`date_created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`date_modified` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (sku)
 	
 )ENGINE InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -32,12 +33,13 @@ CREATE TABLE IF NOT EXISTS `product`
 *
 *	PRIMARY KEY  = sku,seller_id
 *
-*	sku			:	商品代碼
-*	seller_id	:	賣家對應id
-*	price		:	販賣價格
-*	s_price	:	收取運費價格
-*	currency	:	價格幣別
-* 	
+*	sku						:	商品代碼
+*	seller_id				:	賣家對應id
+*	price					:	販賣價格
+*	s_price				:	收取運費價格
+*	currency			:	價格幣別
+* 	date_created	:	輸入資料庫日期
+*
 */
 CREATE TABLE IF NOT EXISTS `product_sellinfo`
 (
@@ -46,6 +48,8 @@ CREATE TABLE IF NOT EXISTS `product_sellinfo`
 	`price` DECIMAL(6,2) NOT NULL DEFAULT 0,
 	`s_price`	DECIMAL(5,2) NOT NULL DEFAULT 0,
 	`currency` CHAR(3) NOT NULL DEFAULT 'USD',
+	`date_created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`date_modified` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (`sku`,`seller_id`)
 	
 )ENGINE InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -61,22 +65,21 @@ CREATE TABLE IF NOT EXISTS `product_sellinfo`
 *	seller_id				:	賣家對應id
 *	price					:	販賣價格
 *	s_price				:	收取運費價格
-*	currency			:	價格幣別
 *	date_created	:	輸入資料庫日期	
 */
 CREATE TABLE IF NOT EXISTS `product_price_record`
 (
 	`id` INT AUTO_INCREMENT,
-	`sku` VARCHAR(15),
-	`seller_id` TINYINT UNSIGNED,
+	`sku` VARCHAR(15) NOT NULL,
+	`seller_id` TINYINT UNSIGNED NOT NULL,	
 	`price` DECIMAL(6,2) NOT NULL DEFAULT 0,
 	`s_price`	DECIMAL(5,2) NOT NULL DEFAULT 0,
 	`currency` CHAR(3) NOT NULL DEFAULT 'USD',
 	`date_created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`date_modified` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (`id`)
 	
 )ENGINE InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
 
 /*
 *	名稱		:	shipping_record
@@ -87,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `product_price_record`
 *	sku						:	商品代碼
 *	country_code	:	寄送國家(數字代碼)
 *	s_cost					:	貨運費用(新台幣)
-*	date_created		:	創造日期
+*	date_created	:	創造日期
 *	date_modified	:	更改日期
 *
 */
@@ -111,12 +114,12 @@ CREATE TABLE IF NOT EXISTS `shipping_record`
 *
 *	PRIMARY KEY  = id
 *
-*  sku         :	產品代碼
-*	p_type	:	包裝類型
+*  sku        		:	產品代碼
+*	p_type		:	包裝類型
 *	p_length	:	包裝長度，單位公分，整數
-*	p_width	:	包裝寬度，單位公分，整數
+*	p_width		:	包裝寬度，單位公分，整數
 *	p_height	:	包裝高度，單位公分，整數
-*	p_weight:	包裝重量，單位公斤，小數前兩位+小數後兩位
+*	p_weight	:	包裝重量，單位公斤，小數前兩位+小數後兩位
 */
 CREATE TABLE IF NOT EXISTS `package_volume` 
 (
@@ -138,8 +141,8 @@ CREATE TABLE IF NOT EXISTS `package_volume`
 *
 *	PRIMARY KEY  = id
 *
-*	id				:	不重複流水號
-*	name			:	賣家代稱
+*	id						:	不重複流水號
+*	name					:	賣家代稱
 *	sell_platform	:	賣場平台名稱
 */
 CREATE TABLE IF NOT EXISTS `seller` 
@@ -156,7 +159,7 @@ CREATE TABLE IF NOT EXISTS `seller`
 *	名稱		:	countries_list
 *	功能		:	國家對照表
 *	
-*	name		:	國家全名
+*	name				:	國家全名
 *	iso_numeric	:	國家iso數字代碼
 */
 CREATE TABLE IF NOT EXISTS `country_list` (
@@ -173,7 +176,7 @@ CREATE TABLE IF NOT EXISTS `country_list` (
 *	
 *	PRIMARY KEY  = id
 *
-*	name		:	tag名稱
+*	name			:	tag名稱
 *	category	:	tag分類
 */
 CREATE TABLE IF NOT EXISTS `tag` (
@@ -210,7 +213,7 @@ CREATE TABLE IF NOT EXISTS `tag_product_map` (
 *	PRIMARY KEY  = id	
 *
 *	t_id			:	tag的id
-*	sr_id			:	shipping record的ID
+*	sr_id		:	shipping record的ID
 */
 CREATE TABLE IF NOT EXISTS `tag_sr_map` (
 	`id` INT AUTO_INCREMENT,
