@@ -15,8 +15,14 @@
 			$this->searchDB($query,'product_cost','This Sku not found on DB');		
 		}
 		
-		public function getProductSellinfo($sku,$sellerId){
-			$query = 'SELECT price,s_price,currency FROM product_price_record WHERE sku="'.$sku.'" AND seller_id="'.$sellerId.'" ORDER BY date_created DESC LIMIT 1';
+		public function getProductPriceRecord($sku,$sellerId,$isGetLastestOne = True){
+			$query = "";
+			if($isGetLastestOne){
+				$query = 'SELECT price,s_price,currency,id FROM product_price_record WHERE sku="'.$sku.'" AND seller_id="'.$sellerId.'" ORDER BY date_created DESC LIMIT 1';
+			}
+			else{
+				$query = 'SELECT id,price,s_price,currency,date_modified FROM product_price_record WHERE sku="'.$sku.'" AND seller_id="'.$sellerId.'" ORDER BY date_created DESC';
+			}
 			$this->searchDB($query,'product_price_record','Product Price Error');	
 		}
 		
@@ -53,16 +59,6 @@
 			$this->searchDB($query,'sr_tag',false);			
 		}
 		
-		public function saveShipRecord($sku,$countryCode,$shipCost){
-			if($countryCode === '999' ){
-				die( json_encode(array('message' => 'ERROR', 'code' => '要選擇國家')));
-			}
-			else{
-				$query = 'INSERT INTO shipping_record (sku,country_code,s_cost) VALUES ("'.$sku.'","'.$countryCode.'","'.$shipCost.'")';
-				$this->saveToDB($query,'save_ship_record',' Save Ship Record Error');	
-			}
-		}
-		
 		public function getTagSearchResult($searchTerm){
 			
 			$link = $this->getDBLink();
@@ -84,12 +80,23 @@
 			$this->searchDB($query,'get_product_tag','Product Tag Search Error');
 		}
 		
-		public function deleteProductTagMap($sku,$tagId){
+		public function saveShipRecord($sku,$countryCode,$shipCost){
+			if($countryCode === '999' ){
+				die( json_encode(array('message' => 'ERROR', 'code' => '要選擇國家')));
+			}
+			else{
+				$query = 'INSERT INTO shipping_record (sku,country_code,s_cost) VALUES ("'.$sku.'","'.$countryCode.'","'.$shipCost.'")';
+				$this->saveToDB($query,'save_ship_record',' Save Ship Record Error');	
+			}
 		}
 		
 		public function savePriceRecord($sku,$sellerId,$productPrice,$shipPrice,$currency){
 			$query	= 'INSERT INTO product_price_record (sku,seller_id,price,s_price,currency) VALUES ("'.$sku.'","'.$sellerId.'","'.$productPrice.'","'.$shipPrice.'","'.$currency.'")';	
 			$this->saveToDB($query,'save_price_record','Listing Price Save Error');			
+		}
+		
+		public function deleteProductTagMap($sku,$tagId){
+		
 		}
 		
 		public function getDBLink(){
@@ -133,7 +140,7 @@
 		public function monkeyWorks(){
 			if($this->works==='qs'){
 				$this->getProductCost($_POST['sku']);
-				$this->getProductSellinfo($_POST['sku'],$_POST['sellerId']);
+				$this->getProductPriceRecord($_POST['sku'],$_POST['sellerId']);
 				$this->getSellPlatform($_POST['sellerId']);
 				$this->getShippingProvider();
 			}
@@ -144,9 +151,12 @@
 			else if ($this->works==='save_ship_record') {
 				$this->saveShipRecord($_POST['sku'],$_POST['countryCode'],$_POST['shipCost']);
 			}
-			else if ($this->works==='get_sr'){ 
+			else if ($this->works==='get_ship_record'){ 
 				$this->getShipRecord($_POST['sku'],$_POST['countryCode']);
 			}
+			else if ($this->works==='get_price_record'){ 
+				$this->getProductPriceRecord($_POST['sku'],$_POST['sellerId'],False);
+			}			
 			else if ($this->works==='package_type'){
 				$this->getPackageType();
 			}

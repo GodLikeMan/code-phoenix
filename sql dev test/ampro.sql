@@ -13,6 +13,7 @@ USE ampro;
 *	name					:	商品全名
 *	cost					:	進貨成本(新台幣)
 *	date_created	:	輸入資料庫日期
+*	date_modified	:	更改日期
 *
 */
 CREATE TABLE IF NOT EXISTS `product`
@@ -27,37 +28,10 @@ CREATE TABLE IF NOT EXISTS `product`
 )ENGINE InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 
-/*
-*	名稱		:	product_sellinfo
-*	功能		:	不同賣家對應的商品資訊
-*
-*	PRIMARY KEY  = sku,seller_id
-*
-*	sku						:	商品代碼
-*	seller_id				:	賣家對應id
-*	price					:	販賣價格
-*	s_price				:	收取運費價格
-*	currency			:	價格幣別
-* 	date_created	:	輸入資料庫日期
-*
-*/
-CREATE TABLE IF NOT EXISTS `product_sellinfo`
-(
-	`sku` VARCHAR(15),
-	`seller_id` TINYINT UNSIGNED,
-	`price` DECIMAL(6,2) NOT NULL DEFAULT 0,
-	`s_price`	DECIMAL(5,2) NOT NULL DEFAULT 0,
-	`currency` CHAR(3) NOT NULL DEFAULT 'USD',
-	`date_created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	`date_modified` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY (`sku`,`seller_id`)
-	
-)ENGINE InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
 
 /*
 *	名稱					:	product_price_record
-*	功能					:	產品修改紀錄
+*	功能					:	產品價格相關修改紀錄
 *
 *	PRIMARY KEY  = id
 *
@@ -66,6 +40,7 @@ CREATE TABLE IF NOT EXISTS `product_sellinfo`
 *	price					:	販賣價格
 *	s_price				:	收取運費價格
 *	date_created	:	輸入資料庫日期	
+* 	date_modified	:	更改日期
 */
 CREATE TABLE IF NOT EXISTS `product_price_record`
 (

@@ -7,7 +7,7 @@ $(document).ready(function(){
 	});
 	
 	/*
-	*	初始化航運供應商的建置 (.......)
+	*	
 	*/
 	function initShippingProvider(json) {
 		var	info = $.parseJSON(json);
@@ -28,7 +28,7 @@ $(document).ready(function(){
 	}
 	
 	/*
-	*	初始化封裝類型選擇建置 (...挖哩勒 by Silver)
+	*	
 	*/
 	function initPackageTypeSelector(json){
 		var	info = $.parseJSON(json);
@@ -64,7 +64,7 @@ $(document).ready(function(){
 	*/
 	function setCookies(json){
 		var	info = $.parseJSON(json);
-		console.log(info);
+		//console.log(info);
 		$.cookie('sellPlatform',info.sell_platform);
 		$.cookie('productPrice', info.product_price_record[0][0].toFixed(2));//售價	
 		$.cookie('shipPrice', info.product_price_record[0][1].toFixed(2));//收取運費
@@ -78,9 +78,9 @@ $(document).ready(function(){
 	}
 
 	/*
-	*	生成基本選項，回傳一個陣列，需要初始化生成
+	*	
 	*/
-	function generateBasicInfoValues() {
+	function generateBasicInfoValue() {
 		
 		var productPrice = $.cookie('productPrice',Number);
 		var shipPrice = $.cookie('shipPrice',Number);
@@ -107,67 +107,90 @@ $(document).ready(function(){
 	}
 	
 	/*
-	*	更新基本訊息
+	*	
 	*/
 	function updateBasicInfo(info){		
 		var label ="";
 		
-		$('#dbi-sku').html('平台 = '+$.cookie('sellPlatform'));
-		$('#dbi-product-price').html('售價 = '+Math.round(info['productPriceExchanged'])+' TWD ( '+info['productPrice']+' )');
-		$('#dbi-ship-price').html('收取運費 = '+Math.round(info['shipPriceExchanged'])+' TWD ( '+info['shipPrice']+' )');
-		$('#dbi-commission-cost').html('平台抽成 = '+Math.round(info['commissionCostExchanged'])+' TWD ( '+info['commissionCost']+' )');
-		$('#dbi-product-cost').html('成本 = '+$.cookie('productCost')+' TWD');
-		$('#dbi-ship-cost').html('實際運費 = '+$.cookie('shipCost')+' TWD');
-		
+		$('#dbi-sku').html('<th>平台</th><td>'+$.cookie('sellPlatform')+'</td>');
+		$('#dbi-product-price').html('<th>售價 </th><td >'+Math.round(info['productPriceExchanged'])+' TWD ( '+info['productPrice']+' )</td>');
+		$('#dbi-ship-price').html('<th>收取運費</th><td>'+Math.round(info['shipPriceExchanged'])+' TWD ( '+info['shipPrice']+' )</td>');
+		$('#dbi-product-cost').html('<th>成本</th><td>'+$.cookie('productCost')+' TWD</td>');
+		$('#dbi-commission-cost').html('<th>平台抽成 </th><td>'+Math.round(info['commissionCostExchanged'])+' TWD ( '+info['commissionCost']+' )</td>');
+		$('#dbi-ship-cost').html('<th>實際運費 </th><td>'+$.cookie('shipCost')+' TWD</td>');
 		if(arr['profitExchanged']<=0){label = addLabel('label-danger','虧損')}//增加Label 來分辨是否虧損
-		
-		$('#dbi-profit').html('預估淨利 = '+Math.round(info['profitExchanged'])+' TWD	'+label);
-		$('#dbi-total-income').html('總收入 = '+Math.round(info['totalIncomeExchanged'])+' TWD');
-		$('#dbi-total-cost').html('總支出 = '+Math.round(info['totalCost'])+' TWD');
+		$('#dbi-profit').html('<th>預估淨利 </th><td> '+Math.round(info['profitExchanged'])+' TWD	'+label+'</td>');
+		$('#dbi-total-income').html('<th>總收入 </th><td> '+Math.round(info['totalIncomeExchanged'])+' TWD</td>');
+		$('#dbi-total-cost').html('<th>總支出 =</th><td>'+Math.round(info['totalCost'])+' TWD</td>');
 		
 	}
 	
 	/*
-	*	初始化基本訊息
+	*	
 	*/
 	function initBasicInfo(){
 		
-		$('#display-result').html('<ul id="dbi" class="list-group"></ul>');	
-		$('#dbi').append('<li id="dbi-sku" class="list-group-item capitalize"></li>');
-		$('#dbi').append('<li id="dbi-product-price" class="list-group-item list-group-item-success" ></li>');
-		$('#dbi').append('<li id="dbi-ship-price" class="list-group-item list-group-item-success" ></li>');
-		$('#dbi').append('<li id="dbi-product-cost" class="list-group-item list-group-item-danger"></li>');
-		$('#dbi').append('<li id="dbi-commission-cost" class="list-group-item list-group-item-danger"></li>');
-		$('#dbi').append('<li id="dbi-ship-cost" class="list-group-item list-group-item-danger"></li>');
-		$('#dbi').append('<li id="dbi-profit" class="list-group-item list-group-item-info"></li>');
-		$('#dbi').append('<li id="dbi-total-income" class="list-group-item"></li>');
-		$('#dbi').append('<li id="dbi-total-cost" class="list-group-item"></li>');	
+		$('#display-result').html('<table id="dbi" class="table table-hover"><tbody></tbody></table>');
+		$('#dbi').append('<tr id="dbi-sku" class="capitalize"></tr>');
+		$('#dbi').append('<tr id="dbi-product-price" class="list-group-item-success" ></tr>');
+		$('#dbi').append('<tr id="dbi-ship-price" class="list-group-item-success" ></tr>');
+		$('#dbi').append('<tr id="dbi-product-cost" class="list-group-item-danger"></tr>');
+		$('#dbi').append('<tr id="dbi-commission-cost" class="list-group-item-danger"></tr>');
+		$('#dbi').append('<tr id="dbi-ship-cost" class="list-group-item-danger"></tr>');
+		$('#dbi').append('<tr id="dbi-profit" class="list-group-item-info"></tr>');
+		$('#dbi').append('<tr id="dbi-total-income" ></tr>');
+		$('#dbi').append('<tr id="dbi-total-cost" ></tr>');	
 		
+		initExtraInfo();
+	}
+	
+	
+	function initExtraInfo(){
+	
 		//extra info 
 		$('#display-result').append('<ul class="nav nav-pills nav-justified" role="tablist" id="display-result-extra"></ul>');
-		$('#display-result-extra').append('<li class="active"><a href="#dbi-shipping-record-tab" role="tab" data-toggle="tab"><i class="fa fa-fw fa-cubes"></i> Shipping Records</a></li>');
-		$('#display-result-extra').append('<li><a href="#dbi-price-history-tab" role="tab" data-toggle="tab"><i class="fa fa-fw fa-paw"></i> Price History</a></li>');
+		$('#display-result-extra').append('<li class="active"><a href="#dbi-ship-record-tab" role="tab" data-toggle="tab"><i class="fa fa-fw fa-cubes"></i> Shipping Records</a></li>');
+		$('#display-result-extra').append('<li><a href="#dbi-price-record-tab" role="tab" data-toggle="tab"><i class="fa fa-fw fa-paw"></i> Price History</a></li>');
 		
 		$('#display-result').append('<div class="tab-content" id="display-result-extra-content"></div>');
-		$('#display-result-extra-content').append('<div class="tab-pane active" id="dbi-shipping-record-tab"></div>');
-		$('#display-result-extra-content').append('<div class="tab-pane" id="dbi-price-history-tab"></div>');
+		$('#display-result-extra-content').append('<div class="tab-pane active" id="dbi-ship-record-tab"></div>');
+		$('#display-result-extra-content').append('<div class="tab-pane" id="dbi-price-record-tab"></div>');
+	}
+	
+	function initExtraInfoPriceRecord(){
+		$('#dbi-price-record-tab').append('<table id="price-record-table" class="table table-hover table-condensed"><thead></thead><tbody></tbody><table>');
+	}
+	
+	function updateExtraInfoPriceRecord(){
+		$.post("code-monkeys.php",{'sellerId':$.cookie('sellerId'),'sku':$.cookie('sku'),'query':'get_price_record'},function(json){	
+			var info = $.parseJSON(json);
+			console.log(json);
+			
+			$('#price-record-table thead').append('<tr><th>販售價格</th><th>收取運費</th><th>幣別</th><th>修改日期</th></tr>');
+			
+			for(var i = 0;i<info.product_price_record.length;i++){
+			
+				$('#price-record-table tbody').append('<tr data-price-record-id="'+info.product_price_record[i][0]+'"><td>'+info.product_price_record[i][1]+'</td><td>'+info.product_price_record[i][2]+'</td><td>'+info.product_price_record[i][3]+'</td><td>'+info.product_price_record[i][4]+'</td></tr>');
+				
+			}
+			
+		});
 	}
 	
 	/*
-	*	初始化基礎 ship 紀錄並建置
+	*	
 	*/
-	function initBasicInfoShipRecords(){
-		$('#dbi-shipping-record-tab').append( '<table id="ship-record-table" class="table table-hover table-condensed"><thead></thead><tbody></tbody><table>');
+	function initExtraInfoShipRecord(){
+		$('#dbi-ship-record-tab').append( '<table id="ship-record-table" class="table table-hover table-condensed"><thead></thead><tbody></tbody><table>');
 	}
 
 	/*
 	*	更新Basic Info上的運費紀錄
 	*/
-	function updateBasicInfoShipRecords(){
+	function updateExtraInfoShipRecord(){
 	
 		//Display Shipping Records
-		$.post("code-monkeys.php",{'countryCode':$.cookie('countryCode'),'sku':$.cookie('sku'),'query':'get_sr'},function(json){	
-			console.log(json);
+		$.post("code-monkeys.php",{'countryCode':$.cookie('countryCode'),'sku':$.cookie('sku'),'query':'get_ship_record'},function(json){	
 			var	info = $.parseJSON(json);
 			
 			if	(typeof(info.shipping_record)==='undefined') {
@@ -217,7 +240,7 @@ $(document).ready(function(){
 	}
 	
 	/*
-	*	切換區域
+	*	
 	*/
 	function  toggleArea(id,active){
 		if(typeof(active)==='undefined') {active = true;}
@@ -346,7 +369,6 @@ $(document).ready(function(){
 		
 		$.post("code-monkeys.php",{'sellerId':$.cookie('sellerId'),'sku':$.cookie('sku'),'query':'qs'},function(json){
 			
-			//console.log(json);//show response
 			var	info = $.parseJSON(json);
 
 			if(info['message']=='ERROR'){
@@ -361,9 +383,11 @@ $(document).ready(function(){
 				
 				//generate BasicInfo Div
 				initBasicInfo();
-				updateBasicInfo(generateBasicInfoValues());
-				initBasicInfoShipRecords();
-				updateBasicInfoShipRecords();
+				updateBasicInfo(generateBasicInfoValue());
+				initExtraInfoShipRecord();
+				updateExtraInfoShipRecord();
+				initExtraInfoPriceRecord();
+				updateExtraInfoPriceRecord();
 				
 				//passing values to IA and LP form
 				assignIAValue();
@@ -386,7 +410,7 @@ $(document).ready(function(){
 		$.cookie('shipPrice',$('#lp-ship-price').val());
 		
 		if ($('#dbi').length >0 ) {//check  the initBasicInfo() function  is triggered or not
-			updateBasicInfo(generateBasicInfoValues());
+			updateBasicInfo(generateBasicInfoValue());
 			$('#lp-save').prop('disabled', false).slideDown();//Enable and show the button for saving 
 		}
 
@@ -395,7 +419,6 @@ $(document).ready(function(){
 	//Test for product save
 	$('#lp-save').on('click',function(){
 	
-				
 		//validate inpu data
 		
 		//save to cookie
@@ -413,7 +436,7 @@ $(document).ready(function(){
 			}
 			else{
 				//show success msg!
-				//console.log(info);
+
 				$('#lp-save').prop('disabled', false).slideDown();//Enable and show the button for saving 
 			}	
 		});
