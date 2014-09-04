@@ -74,7 +74,8 @@ $(document).ready(function(){
 		$.cookie('commissionCost',($.cookie('totalIncome',Number)*0.2).toFixed(2));//被抽成金額
 		$.cookie('productCost',info.product_cost[0][0]);
 		$.cookie('totalCost',parseInt(info.product_cost)+currencyConvert($.cookie('commissionCost',Number))+$.cookie('shipCost',Number));//產品成本+被抽成金額*匯率+實際花費運費 (TWD)
-
+		$.cookie('originProductPrice',$.cookie('productPrice'));
+		$.cookie('originShipPrice',$.cookie('shipPrice'));
 	}
 
 	/*
@@ -121,7 +122,7 @@ $(document).ready(function(){
 		if(arr['profitExchanged']<=0){label = addLabel('label-danger','虧損')}//增加Label 來分辨是否虧損
 		$('#dbi-profit').html('<th>預估淨利 </th><td> '+Math.round(info['profitExchanged'])+' TWD	'+label+'</td>');
 		$('#dbi-total-income').html('<th>總收入 </th><td> '+Math.round(info['totalIncomeExchanged'])+' TWD</td>');
-		$('#dbi-total-cost').html('<th>總支出 =</th><td>'+Math.round(info['totalCost'])+' TWD</td>');
+		$('#dbi-total-cost').html('<th>總支出 </th><td>'+Math.round(info['totalCost'])+' TWD</td>');
 		
 	}
 	
@@ -158,7 +159,7 @@ $(document).ready(function(){
 	}
 	
 	function initExtraInfoPriceRecord(){
-		$('#dbi-price-record-tab').append('<table id="price-record-table" class="table table-hover table-condensed"><thead></thead><tbody></tbody><table>');
+		$('#dbi-price-record-tab').append('<table  id="price-record-table" class="table table-hover table-condensed"><thead></thead><tbody></tbody><table>');
 	}
 	
 	function updateExtraInfoPriceRecord(){
@@ -166,15 +167,32 @@ $(document).ready(function(){
 			var info = $.parseJSON(json);
 			console.log(json);
 			
-			$('#price-record-table thead').append('<tr><th>販售價格</th><th>收取運費</th><th>幣別</th><th>修改日期</th></tr>');
+			$('#price-record-table thead').html('<tr><th data-column-id="id" data-type="numeric"  data-sortable="false" data-visible="false">ID</th><th data-column-id="price">販售價格</th><th data-column-id="shipPrice">收取運費</th><th data-column-id="currency">幣別</th><th data-column-id="dateModified">修改日期</th><th data-column-id="commands" data-formatter="commands" data-sortable="false">Commands</th></tr>');
+			
+			$('#price-record-table tbody').html("");//clear old data
 			
 			for(var i = 0;i<info.product_price_record.length;i++){
 			
-				$('#price-record-table tbody').append('<tr data-price-record-id="'+info.product_price_record[i][0]+'"><td>'+info.product_price_record[i][1]+'</td><td>'+info.product_price_record[i][2]+'</td><td>'+info.product_price_record[i][3]+'</td><td>'+info.product_price_record[i][4]+'</td></tr>');
+				$('#price-record-table tbody').append('<tr ><td>'+info.product_price_record[i][0]+'</td><td>'+info.product_price_record[i][1]+'</td><td>'+info.product_price_record[i][2]+'</td><td>'+info.product_price_record[i][3]+'</td><td>'+info.product_price_record[i][4]+'</td></tr>');
 				
 			}
 			
-		});
+		}).done(function(){
+				var  price_record_table =$('#price-record-table').bootgrid({
+						formatters: {
+							"commands": function(column, row) {
+								return "<button type=\"button\" class=\"btn btn-xs btn-default command-edit\" data-row-id=\"" + row.id + "\"><i class=\"fa fa-pencil\"></i></button> " + 
+											"<button type=\"button\" class=\"btn btn-xs btn-default command-delete\" data-row-id=\"" + row.id + "\"><i class=\"fa fa-trash-o\"></i></button>";
+							}
+						}
+					}).on("loaded.rs.jquery.bootgrid", function(){
+							/* Executes after data is loaded and rendered */
+							price_record_table.find(".command-edit").on("click", function(e){
+							
+								alert("You pressed edit on row: " + $(this).data("row-id"));
+							}).end().find(".command-delete").on("click", function(e){alert("You pressed delete on row: " + $(this).data("row-id"));});
+						});
+				});
 	}
 	
 	/*
@@ -193,11 +211,14 @@ $(document).ready(function(){
 		$.post("code-monkeys.php",{'countryCode':$.cookie('countryCode'),'sku':$.cookie('sku'),'query':'get_ship_record'},function(json){	
 			var	info = $.parseJSON(json);
 			
+			$('#ship-record-table thead,#ship-record-table tbody').html("");//clear old data 
+			
 			if	(typeof(info.shipping_record)==='undefined') {
 				$('#dbi').append('<li id="dbi-no-sr" class="list-group-item">沒有貨運紀錄</li>');
 			}
 			else{
 				$('#dbi-no-sr').remove();//刪除顯示沒有紀錄
+				
 				
 				if($.cookie('countryCode')==='999') {
 					$('#ship-record-table thead').append('<tr><th data-column-id="country">國家</th><th data-column-id="shipcost">平均實際運費 (TWD)</th></tr>');
@@ -206,7 +227,7 @@ $(document).ready(function(){
 					}							
 				}
 				else{
-					$('#ship-record-table thead').append('<tr><th data-column-id="country">國家</th><th data-column-id="shipcost">實際運費 (TWD)</th><th data-column-id="shipProvider">Shipping Provider</th><th data-column-id="packageType">Package Type</th></tr>');
+					$('#ship-record-table thead').append('<tr><th data-column-id="id" data-type="numeric"  data-sortable="false" data-visible="false">ID</th><th data-column-id="country">國家</th><th data-column-id="shipcost">運費 (TWD)</th><th data-column-id="shipProvider">貨運商</th><th data-column-id="packageType">包裝</th><th data-column-id="commands" data-formatter="commands" data-sortable="false">Commands</th></tr>');
 					
 					for(var i=0;i<info.shipping_record.length;i++){
 						
@@ -220,7 +241,7 @@ $(document).ready(function(){
 						  .done(function( json ) {
 							var	tags = $.parseJSON(json);
 							
-							$('#ship-record-table tbody').append('<tr id="sr-'+i+'"><td>'+info.shipping_record[i][1]+'</td><td> '+info.shipping_record[i][2]+'</td></tr>');
+							$('#ship-record-table tbody').append('<tr id="sr-'+i+'"><td>'+info.shipping_record[i][0]+'</td><td>'+info.shipping_record[i][1]+'</td><td> '+info.shipping_record[i][2]+'</td></tr>');
 							
 							if(!(typeof(tags.sr_tag)==='undefined')){
 								for(var j=0;j<tags.sr_tag.length;j++){
@@ -235,13 +256,24 @@ $(document).ready(function(){
 				}
 			}
 		})	.done(function(){
-				$('#ship-record-table').bootgrid();
+				var ship_record_table = $('#ship-record-table').bootgrid({
+					formatters: {
+						"commands": function(column, row) {
+							return "<button type=\"button\" class=\"btn btn-xs btn-default command-edit\" data-row-id=\"" + row.id + "\"><i class=\"fa fa-pencil\"></i></button> " + 
+										"<button type=\"button\" class=\"btn btn-xs btn-default command-delete\" data-row-id=\"" + row.id + "\"><i class=\"fa fa-trash-o\"></i></button>";
+						}
+					}					
+				}).on("loaded.rs.jquery.bootgrid", function(){
+						/* Executes after data is loaded and rendered */
+						ship_record_table.find(".command-edit").on("click", function(e){
+							
+							alert("You pressed edit on row: " + $(this).data("row-id"));
+						}).end().find(".command-delete").on("click", function(e){alert("You pressed delete on row: " + $(this).data("row-id"));});
+					});
 			});		
 	}
 	
 	/*
-	*	
-	*/
 	function  toggleArea(id,active){
 		if(typeof(active)==='undefined') {active = true;}
 		
@@ -261,16 +293,10 @@ $(document).ready(function(){
 			initPackageTypeSelector(json);
 		});	
 	});
-	
-	/*
-	*	清除id = "ei-div"的內容
 	*/
-	function cleanExtraInfo(){
-		$('#ei-div').html("");
-	}
 	
 	/*
-	*	快速的將表單結果分配儲存進去
+	*	
 	*	有產品編號、貨運費用、賣家、國家
 	*/
 	function assignIAValue(){
@@ -358,7 +384,7 @@ $(document).ready(function(){
 	
 		event.preventDefault();
 		
-		cleanExtraInfo();
+		$('#display-result').html("");//clean ExtraInfo
 		
 		//set cookies from form
 		$.cookie('sku',$('#qs-sku').val() );	
@@ -406,42 +432,65 @@ $(document).ready(function(){
 	$("#listing-price-form").on("submit",function() {
 		event.preventDefault();
 		
-		$.cookie('productPrice',$('#lp-sell-price').val());
-		$.cookie('shipPrice',$('#lp-ship-price').val());
-		
-		if ($('#dbi').length >0 ) {//check  the initBasicInfo() function  is triggered or not
-			updateBasicInfo(generateBasicInfoValue());
-			$('#lp-save').prop('disabled', false).slideDown();//Enable and show the button for saving 
+		if(($('#lp-sell-price').val() == $.cookie('originProductPrice'))&($('#lp-ship-price').val() == $.cookie('originShipPrice'))){
+			console.log('atlas!');
+			return false;
 		}
-
+		else{
+			
+			$.cookie('productPrice',$('#lp-sell-price').val());
+			$.cookie('shipPrice',$('#lp-ship-price').val());
+			
+			if ($('#dbi').length >0 ) {//check  the initBasicInfo() function  is triggered or not
+				updateBasicInfo(generateBasicInfoValue());
+				
+				$('#lp-save').prop('disabled', false).slideDown();//Enable and show the button for saving 
+			}		
+		}
 	});
 	
-	//Test for product save
+	//product 
 	$('#lp-save').on('click',function(){
 	
 		//validate inpu data
-		
-		//save to cookie
-		$.cookie('productPrice',$('#lp-sell-price').val() );//售價	
-		$.cookie('shipPrice', $('#lp-ship-price').val());//收取運費
-		
-		//save data to database 
-		$.post("code-monkeys.php",{'sku':$.cookie('sku'),'sellerId':$.cookie('sellerId'),'productPrice':$.cookie('productPrice'),'shipPrice':$.cookie('shipPrice'),'currency':$.cookie('currency'),'query':'save_price_record'},function(json){
-		
-			var	info = $.parseJSON(json);
+		if(($('#lp-sell-price').val() == $.cookie('originProductPrice'))&($('#lp-ship-price').val() == $.cookie('originShipPrice'))){
+			console.log('wwwwtf');
+			return false;
+		}
+		else{
+			//save to cookie
+			$.cookie('productPrice',$('#lp-sell-price').val());//售價	
+			$.cookie('shipPrice', $('#lp-ship-price').val());//收取運費
+			
+			//save data to database 
+			$.post("code-monkeys.php",{'sku':$.cookie('sku'),'sellerId':$.cookie('sellerId'),'productPrice':$.cookie('productPrice'),'shipPrice':$.cookie('shipPrice'),'currency':$.cookie('currency'),'query':'save_price_record'},function(json){
+			
+				var	info = $.parseJSON(json);
 
-			if(info['message']=='ERROR'){
-				$("#display-result").html('<p>'+info.code+'</p>');			
-				$('#lp-save').prop('disabled', true).slideUp();//disable button for anti-spam
-			}
-			else{
-				//show success msg!
-
-				$('#lp-save').prop('disabled', false).slideDown();//Enable and show the button for saving 
-			}	
-		});
-	
-		
+				if(info['message']=='ERROR'){
+					BootstrapDialog.show({
+						title: 'ERROR',
+						message:'<p>'+info.code+'</p>',
+						type: BootstrapDialog.TYPE_DANGER, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
+					});
+				}
+				else{
+					//show success msg!
+					BootstrapDialog.show({
+						title: '儲存成功',
+						message: '<table class="table table-hover"><tr><th>SKU</th><td>'+$.cookie('sku')+'</td></tr><tr><th>售價</th><td>'+$.cookie('productPrice')+'</td></tr><tr><th>收取運費</th><td>'+$.cookie('shipPrice')+'</td></tr></table>',
+						type: BootstrapDialog.TYPE_SUCCESS, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
+						onshown: function(dialogRef){setTimeout(function(){ dialogRef.close(); }, 2000);}
+					});
+					updateExtraInfoPriceRecord();
+					$.cookie('originProductPrice',$.cookie('productPrice'));
+					$.cookie('originShipPrice',$.cookie('shipPrice'));
+					
+				}	
+			}).done(function(){
+					$('#lp-save').prop('disabled', true).slideUp();//disable button for anti-spam
+				});			
+		}
 	});
 	
 	function showMsg(msg,type,obj){
@@ -450,7 +499,7 @@ $(document).ready(function(){
 		obj.html(str);
 	}
 	
-
+	/*
 	$("#update-shipping-record-form").on( "submit", function() {
 		event.preventDefault();
 		
@@ -480,11 +529,10 @@ $(document).ready(function(){
 					
 				//show msg about this operate
 				
-			});
-			
+			});	
 		}
 	});
-	
+	*/
 	//active bootstrap-select
 	$('.selectpicker').selectpicker();
 	
@@ -511,7 +559,6 @@ $(document).ready(function(){
 				}
 			}
 			//console.log(info.get_tag_search_result.length);
-
 		});
 	}
 	
