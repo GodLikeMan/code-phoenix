@@ -49,7 +49,7 @@
 				$query 	= 'SELECT cl.name,avg(sr.s_cost)  FROM shipping_record AS sr,country_list AS cl WHERE  sku="'.$sku.'" AND sr.country_code = cl.iso_numeric GROUP BY cl.name ';	
 			}
 			else{
-				$query = 'SELECT sr.id,cl.name,sr.s_cost FROM shipping_record AS sr,country_list AS cl WHERE (sku="'.$sku.'" AND sr.country_code  = "'.$countryCode.'") AND sr.country_code = cl.iso_numeric  ';
+				$query = 'SELECT sr.id,cl.name,sr.s_cost,date_modified FROM shipping_record AS sr,country_list AS cl WHERE (sku="'.$sku.'" AND sr.country_code  = "'.$countryCode.'") AND sr.country_code = cl.iso_numeric  GROUP BY date_modified DESC ';
 			}			
 			$this->searchDB($query,'shipping_record',false);			
 		}

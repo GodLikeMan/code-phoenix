@@ -315,7 +315,9 @@ $(document).ready(function(){
 	}
 	
 	$('#qs-save').on("click",function() {
-		
+	
+		$('#qs-save').prop('disabled', true);//disable and hide button for anti-spam
+	
 		//save to cookie
 		$.cookie('sku',$('#qs-sku').val());
 		$.cookie('countryName',$('#qs-country option:selected').text());
@@ -330,20 +332,21 @@ $(document).ready(function(){
 		*	沒有搜尋到此sku->	 abort and display warning
 		*/
 		
-		$('#qs-save').prop('disabled', true);//disable and hide button for anti-spam
-	
 		//popup hint for saving what data
 		BootstrapDialog.show({
             title: '儲存實際運費到資料庫?',
             message: '<table class="table table-hover"><tr><th>SKU</th><td>'+$.cookie('sku')+'</td></tr><tr><th>國家</th><td>'+$.cookie('countryName')+'</td></tr><tr><th>實際運費</th><td>'+$.cookie('shipCost')+'</td></tr></table>',
             type: BootstrapDialog.TYPE_WARNING, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
-			closable: false,
+			closable: true,
 			buttons: [{
                 label: '確認',
 				icon: 'glyphicon glyphicon-send',
 				autospin: true,
                 action: function(dialogRef) {
 				
+					dialogRef.enableButtons(false);
+					dialogRef.getModalFooter().hide();
+					
 					//Start AJAX save data to database 
 					$.post("code-monkeys.php",{'sku':$.cookie('sku'),'countryCode':$.cookie('countryCode'),'shipCost':$.cookie('shipCost'),'query':'save_ship_record'},function(json){
 					
@@ -352,8 +355,6 @@ $(document).ready(function(){
 						if(info['message']=='ERROR'){
 							dialogRef.setClosable(true);
 							dialogRef.setType(BootstrapDialog.TYPE_DANGER);
-							dialogRef.getModalBody().html('<p>'+info.code+'</p>');
-							dialogRef.getModalFooter().hide();
 							dialogRef.setTitle(info.message);
 						}
 						else{
@@ -449,7 +450,6 @@ $(document).ready(function(){
 		}
 	});
 	
-	//product 
 	$('#lp-save').on('click',function(){
 	
 		//validate inpu data
